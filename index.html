@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexora AI — Rent the Future</title>
+<meta name="description" content="Rent AI-powered robots built to generate profit online. Deploy instantly, earn 24/7."/>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Syne:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#030712;
+  --bg2:#050d1a;
+  --bg3:#040a16;
+  --cyan:#00d4ff;
+  --cyan2:#00ffcc;
+  --blue:#0066ff;
+  --surface:rgba(0,212,255,0.04);
+  --border:rgba(0,212,255,0.15);
+  --border2:rgba(0,212,255,0.08);
+  --white:#e8f4ff;
+  --muted:rgba(232,244,255,0.48);
+  --font-h:'Orbitron',sans-serif;
+  --font-b:'Syne',sans-serif;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font-b);overflow-x:hidden;line-height:1.6;}
+
+/* CANVAS FX */
+#canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.scan{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.025) 2px,rgba(0,0,0,0.025) 4px);pointer-events:none;z-index:9998;}
+
+/* NAV */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  display:flex;justify-content:space-between;align-items:center;
+  padding:1.2rem 5rem;
+  background:rgba(3,7,18,0.88);
+  backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border2);
+  transition:all 0.3s;
+}
+nav.scrolled{padding:0.8rem 5rem;background:rgba(3,7,18,0.97);}
+.logo{font-family:var(--font-h);font-size:1.25rem;font-weight:700;color:var(--cyan);letter-spacing:0.12em;text-shadow:0 0 25px rgba(0,212,255,0.5);text-decoration:none;}
+.logo span{color:var(--white);}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{font-size:0.7rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;font-family:var(--font-h);font-weight:400;}
+.nav-links a:hover{color:var(--cyan);}
+.nav-cta{padding:0.6rem 1.6rem;background:transparent;border:1px solid var(--cyan);color:var(--cyan);font-family:var(--font-h);font-size:0.58rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 0 15px rgba(0,212,255,0.1);}
+.nav-cta:hover{background:var(--cyan);color:var(--bg);box-shadow:0 0 30px rgba(0,212,255,0.4);}
+.nav-hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;}
+.nav-hamburger span{width:24px;height:2px;background:var(--cyan);transition:all 0.3s;}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;align-items:center;padding:8rem 5rem 4rem;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;top:50%;left:58%;transform:translate(-50%,-50%);width:800px;height:800px;background:radial-gradient(circle,rgba(0,212,255,0.06) 0%,rgba(0,102,255,0.03) 40%,transparent 70%);pointer-events:none;}
+.hero-glow2{position:absolute;top:-150px;left:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(0,255,204,0.03) 0%,transparent 70%);pointer-events:none;}
+.hero-grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 70% 70% at center,black,transparent);pointer-events:none;}
+.hero-content{position:relative;z-index:1;max-width:660px;}
+.hero-badge{display:inline-flex;align-items:center;gap:0.6rem;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--cyan2);margin-bottom:2rem;padding:0.4rem 1rem;border:1px solid rgba(0,255,204,0.25);background:rgba(0,255,204,0.04);font-family:var(--font-h);}
+.hero-badge::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--cyan2);animation:blink 1.5s infinite;flex-shrink:0;}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 8px var(--cyan2);}50%{opacity:0.2;box-shadow:none;}}
+h1{font-family:var(--font-h);font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.08;letter-spacing:0.04em;margin-bottom:1.5rem;}
+h1 .c1{color:var(--cyan);text-shadow:0 0 40px rgba(0,212,255,0.5),0 0 80px rgba(0,212,255,0.2);}
+h1 .c2{color:var(--cyan2);text-shadow:0 0 40px rgba(0,255,204,0.5);}
+.hero-sub{font-size:0.95rem;line-height:1.85;color:var(--muted);max-width:500px;margin-bottom:2.8rem;}
+.hero-btns{display:flex;gap:1rem;flex-wrap:wrap;}
+.btn-primary{padding:0.9rem 2.2rem;background:linear-gradient(135deg,var(--cyan),var(--blue));color:var(--bg);border:none;font-family:var(--font-h);font-size:0.58rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 0 30px rgba(0,212,255,0.25);}
+.btn-primary:hover{box-shadow:0 0 50px rgba(0,212,255,0.6);transform:translateY(-2px);}
+.btn-outline{padding:0.9rem 2.2rem;background:transparent;border:1px solid var(--border);color:var(--white);font-family:var(--font-h);font-size:0.58rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(0,212,255,0.1);}
+
+/* ROBOT VISUAL */
+.hero-visual{position:absolute;right:5rem;top:50%;transform:translateY(-50%);width:440px;height:440px;z-index:1;}
+.ring{position:absolute;inset:0;border-radius:50%;border:1px solid rgba(0,212,255,0.18);animation:spin 22s linear infinite;}
+.ring::before{content:'';position:absolute;top:-5px;left:50%;width:10px;height:10px;border-radius:50%;background:var(--cyan);box-shadow:0 0 20px var(--cyan),0 0 40px rgba(0,212,255,0.5);transform:translateX(-50%);}
+.ring2{position:absolute;inset:35px;border-radius:50%;border:1px solid rgba(0,255,204,0.12);animation:spin 14s linear infinite reverse;}
+.ring2::before{content:'';position:absolute;top:-4px;left:50%;width:8px;height:8px;border-radius:50%;background:var(--cyan2);box-shadow:0 0 15px var(--cyan2);transform:translateX(-50%);}
+.ring3{position:absolute;inset:75px;border-radius:50%;border:1px solid rgba(0,102,255,0.15);animation:spin 9s linear infinite;}
+.ring3::before{content:'';position:absolute;top:-3px;left:50%;width:6px;height:6px;border-radius:50%;background:var(--blue);box-shadow:0 0 12px var(--blue);transform:translateX(-50%);}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.robot-core{position:absolute;inset:110px;border-radius:50%;background:radial-gradient(circle,rgba(0,212,255,0.12),rgba(0,102,255,0.06),transparent 70%);border:1px solid rgba(0,212,255,0.25);display:flex;align-items:center;justify-content:center;box-shadow:0 0 80px rgba(0,212,255,0.08),inset 0 0 40px rgba(0,212,255,0.05);animation:pulse 4s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 60px rgba(0,212,255,0.08);}50%{box-shadow:0 0 120px rgba(0,212,255,0.2);}}
+.robot-icon{font-size:4rem;filter:drop-shadow(0 0 25px rgba(0,212,255,0.9));}
+
+/* STATS */
+.stats{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);}
+.stat{padding:2.2rem 2rem;border-right:1px solid var(--border2);text-align:center;background:var(--surface);position:relative;overflow:hidden;transition:background 0.3s;}
+.stat:last-child{border-right:none;}
+.stat::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
+.stat:hover{background:rgba(0,212,255,0.06);}
+.stat:hover::before{opacity:1;}
+.stat-num{font-family:var(--font-h);font-size:2rem;font-weight:700;color:var(--cyan);display:block;text-shadow:0 0 20px rgba(0,212,255,0.4);}
+.stat-label{font-size:0.62rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);margin-top:0.4rem;display:block;font-family:var(--font-h);}
+
+/* SECTIONS */
+section{padding:7rem 5rem;position:relative;z-index:1;}
+.s-tag{font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--cyan2);margin-bottom:0.8rem;display:block;font-family:var(--font-h);}
+h2{font-family:var(--font-h);font-size:clamp(1.6rem,3.5vw,2.5rem);font-weight:700;line-height:1.2;letter-spacing:0.05em;margin-bottom:1.2rem;}
+h2 .c{color:var(--cyan);text-shadow:0 0 20px rgba(0,212,255,0.4);}
+h2 .c2{color:var(--cyan2);}
+.glow-line{height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--cyan2),transparent);opacity:0.15;margin:0;}
+
+/* ABOUT */
+.about-wrap{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
+.about-text p{font-size:0.92rem;line-height:1.88;color:var(--muted);}
+.about-text p+p{margin-top:1rem;}
+.about-text .btn-primary{margin-top:2rem;}
+.about-cards{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border2);}
+.acard{background:var(--bg2);padding:1.8rem;position:relative;overflow:hidden;transition:all 0.3s;cursor:default;}
+.acard::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(0,212,255,0.05),transparent);opacity:0;transition:opacity 0.3s;}
+.acard:hover{border-color:var(--cyan);box-shadow:0 0 30px rgba(0,212,255,0.06);}
+.acard:hover::after{opacity:1;}
+.acard-icon{font-size:1.8rem;margin-bottom:0.8rem;}
+.acard-title{font-family:var(--font-h);font-size:0.68rem;font-weight:600;color:var(--cyan);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+.acard-body{font-size:0.8rem;color:var(--muted);line-height:1.65;}
+
+/* SERVICES */
+.services{background:linear-gradient(180deg,var(--bg) 0%,#040d1e 50%,var(--bg) 100%);}
+.services-header{text-align:center;max-width:600px;margin:0 auto 4rem;}
+.services-header p{font-size:0.88rem;color:var(--muted);line-height:1.78;}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);max-width:1100px;margin:0 auto;}
+.plan{background:var(--bg2);padding:2.8rem 2.2rem;position:relative;overflow:hidden;transition:all 0.3s;}
+.plan-top-bar{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--border),transparent);transition:all 0.4s;}
+.plan:hover .plan-top-bar{background:linear-gradient(90deg,transparent,var(--cyan),transparent);}
+.plan:hover{box-shadow:0 0 50px rgba(0,212,255,0.05);}
+.plan.hot{background:linear-gradient(145deg,#050f20,#040a18);border:1px solid rgba(0,212,255,0.25);box-shadow:0 0 50px rgba(0,212,255,0.07);}
+.plan.hot .plan-top-bar{background:linear-gradient(90deg,transparent,var(--cyan),var(--cyan2),transparent);}
+.hot-badge{position:absolute;top:1.2rem;right:1.2rem;background:linear-gradient(135deg,var(--cyan),var(--blue));color:var(--bg);font-family:var(--font-h);font-size:0.48rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;padding:0.28rem 0.7rem;}
+.plan-name{font-family:var(--font-h);font-size:0.78rem;font-weight:700;color:var(--cyan);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:0.5rem;}
+.plan-desc{font-size:0.78rem;color:var(--muted);margin-bottom:1.8rem;line-height:1.65;}
+.plan-price{margin-bottom:2rem;}
+.plan-price .amount{font-family:var(--font-h);font-size:2.4rem;font-weight:700;color:var(--white);}
+.plan-price .period{font-size:0.72rem;color:var(--muted);margin-left:0.2rem;}
+.plan-features{list-style:none;margin-bottom:2.2rem;}
+.plan-features li{font-size:0.8rem;color:var(--muted);padding:0.55rem 0;border-bottom:1px solid var(--border2);display:flex;align-items:center;gap:0.7rem;}
+.plan-features li::before{content:'▹';color:var(--cyan);font-size:0.7rem;flex-shrink:0;}
+.plan-btn{width:100%;padding:0.88rem;font-family:var(--font-h);font-size:0.55rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;border:1px solid var(--cyan);background:transparent;color:var(--cyan);}
+.plan.hot .plan-btn{background:linear-gradient(135deg,var(--cyan),var(--blue));color:var(--bg);border:none;box-shadow:0 0 25px rgba(0,212,255,0.3);}
+.plan-btn:hover{background:var(--cyan);color:var(--bg);box-shadow:0 0 30px rgba(0,212,255,0.4);}
+
+/* HOW IT WORKS */
+.how-wrap{max-width:1100px;margin:4rem auto 0;}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:0;position:relative;}
+.steps::before{content:'';position:absolute;top:25px;left:15%;right:15%;height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--cyan2),var(--cyan),transparent);opacity:0.25;}
+.step{padding:0 1.5rem;text-align:center;}
+.step-dot{width:52px;height:52px;border-radius:50%;background:var(--bg2);border:1px solid var(--cyan);display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;box-shadow:0 0 25px rgba(0,212,255,0.15);font-family:var(--font-h);font-size:0.7rem;font-weight:700;color:var(--cyan);position:relative;z-index:1;transition:all 0.3s;}
+.step:hover .step-dot{background:rgba(0,212,255,0.1);box-shadow:0 0 40px rgba(0,212,255,0.3);}
+.step-title{font-family:var(--font-h);font-size:0.65rem;font-weight:600;color:var(--white);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.7rem;}
+.step-body{font-size:0.8rem;color:var(--muted);line-height:1.72;}
+
+/* TESTIMONIALS */
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border2);max-width:1100px;margin:4rem auto 0;}
+.tcard{background:var(--bg2);padding:2.2rem;position:relative;transition:all 0.3s;}
+.tcard:hover{background:rgba(0,212,255,0.03);}
+.tcard-quote{font-size:2rem;color:var(--cyan);opacity:0.4;line-height:1;margin-bottom:1rem;font-family:serif;}
+.tcard-body{font-size:0.83rem;color:var(--muted);line-height:1.75;margin-bottom:1.5rem;}
+.tcard-author{display:flex;align-items:center;gap:0.8rem;}
+.tcard-avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--blue));display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;color:var(--bg);font-family:var(--font-h);flex-shrink:0;}
+.tcard-name{font-family:var(--font-h);font-size:0.62rem;font-weight:600;color:var(--white);letter-spacing:0.08em;}
+.tcard-role{font-size:0.72rem;color:var(--muted);}
+
+/* FAQ */
+.faq-wrap{max-width:800px;margin:3rem auto 0;}
+.faq-item{border-bottom:1px solid var(--border2);overflow:hidden;}
+.faq-q{width:100%;padding:1.4rem 0;display:flex;justify-content:space-between;align-items:center;background:transparent;border:none;color:var(--white);font-family:var(--font-h);font-size:0.7rem;font-weight:600;letter-spacing:0.08em;text-align:left;cursor:pointer;transition:color 0.3s;}
+.faq-q:hover{color:var(--cyan);}
+.faq-icon{font-size:1rem;color:var(--cyan);transition:transform 0.3s;flex-shrink:0;margin-left:1rem;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.faq-item.open .faq-a{max-height:200px;}
+.faq-a p{font-size:0.83rem;color:var(--muted);line-height:1.78;padding-bottom:1.4rem;}
+
+/* CTA SECTION */
+.cta-section{text-align:center;background:linear-gradient(135deg,rgba(0,212,255,0.04),rgba(0,102,255,0.03));border-top:1px solid var(--border2);border-bottom:1px solid var(--border2);}
+.cta-section h2{margin-bottom:1rem;}
+.cta-section p{font-size:0.9rem;color:var(--muted);max-width:480px;margin:0 auto 2.5rem;}
+.cta-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+
+/* FOOTER */
+footer{padding:3rem 5rem;border-top:1px solid var(--border2);position:relative;z-index:1;background:rgba(0,0,0,0.3);}
+.footer-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:2.5rem;flex-wrap:wrap;gap:2rem;}
+.footer-brand .logo{display:block;margin-bottom:0.8rem;}
+.footer-brand p{font-size:0.78rem;color:var(--muted);max-width:240px;line-height:1.7;}
+.footer-col h4{font-family:var(--font-h);font-size:0.6rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:1rem;}
+.footer-col ul{list-style:none;display:flex;flex-direction:column;gap:0.6rem;}
+.footer-col ul a{font-size:0.78rem;color:var(--muted);text-decoration:none;transition:color 0.3s;}
+.footer-col ul a:hover{color:var(--cyan);}
+.footer-bottom{display:flex;justify-content:space-between;align-items:center;padding-top:1.5rem;border-top:1px solid var(--border2);flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:0.68rem;color:var(--muted);}
+.footer-socials{display:flex;gap:1rem;}
+.social-btn{width:34px;height:34px;border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:0.8rem;cursor:pointer;transition:all 0.3s;text-decoration:none;}
+.social-btn:hover{border-color:var(--cyan);box-shadow:0 0 15px rgba(0,212,255,0.2);}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px);}to{opacity:1;transform:translateY(0);}}
+.hero-content>*{animation:fadeUp 0.9s ease both;}
+.hero-badge{animation-delay:0.1s;}
+h1{animation-delay:0.25s;}
+.hero-sub{animation-delay:0.4s;}
+.hero-btns{animation-delay:0.55s;}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+
+/* MOBILE */
+@media(max-width:960px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links,.nav-cta{display:none;}
+  .nav-hamburger{display:flex;}
+  .hero{padding:6rem 1.5rem 3rem;}
+  .hero-visual{display:none;}
+  section{padding:4rem 1.5rem;}
+  .about-wrap{grid-template-columns:1fr;gap:3rem;}
+  .plans{grid-template-columns:1fr;}
+  .steps{grid-template-columns:1fr 1fr;gap:2.5rem;}
+  .steps::before{display:none;}
+  .testi-grid{grid-template-columns:1fr;}
+  .stats{grid-template-columns:1fr 1fr;}
+  .stat{border-right:none;border-bottom:1px solid var(--border2);}
+  footer{padding:3rem 1.5rem;}
+  .footer-top{flex-direction:column;}
+  .footer-bottom{flex-direction:column;text-align:center;}
+  .cta-btns{flex-direction:column;align-items:center;}
+}
+</style>
+</head>
+<body>
+
+<canvas id="canvas"></canvas>
+<div class="scan"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="#home" class="logo">NEXORA <span>AI</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Plans</a></li>
+    <li><a href="#how">Process</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
+  <button class="nav-cta" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Get Started</button>
+  <div class="nav-hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-grid-bg"></div>
+  <div class="hero-content">
+    <div class="hero-badge">Next-Gen AI Profit Automation</div>
+    <h1>RENT AN <span class="c1">AI ROBOT.</span><br>GENERATE <span class="c2">PROFIT.</span></h1>
+    <p class="hero-sub">Deploy our proprietary AI robots instantly — engineered to generate income online 24/7. No coding. No complexity. Just results.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">View Rental Plans</button>
+      <button class="btn-outline" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How It Works</button>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="ring"></div>
+    <div class="ring2"></div>
+    <div class="ring3"></div>
+    <div class="robot-core"><div class="robot-icon">🤖</div></div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats">
+  <div class="stat fade-in"><span class="stat-num" data-target="2400">0</span><span class="stat-label">Active Clients</span></div>
+  <div class="stat fade-in"><span class="stat-num">$18M+</span><span class="stat-label">Profit Generated</span></div>
+  <div class="stat fade-in"><span class="stat-num">99.7%</span><span class="stat-label">Uptime Guarantee</span></div>
+  <div class="stat fade-in"><span class="stat-num">24/7</span><span class="stat-label">Always Running</span></div>
+</div>
+
+<div class="glow-line"></div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-wrap">
+    <div class="about-text fade-in">
+      <span class="s-tag">// Who We Are</span>
+      <h2>Built to make <span class="c">AI work</span> for <span class="c2">you.</span></h2>
+      <p>Nexora AI is an advanced automation company specializing in AI-powered profit robots for the digital economy. Our bots operate autonomously across multiple online platforms — handling trading, arbitrage, content monetization, and more.</p>
+      <p>We rent our technology so you benefit from cutting-edge AI without the overhead of building it yourself. Onboard in minutes and start seeing returns. Our team continuously refines each model to stay ahead of market shifts — so your bot is always optimized.</p>
+      <button class="btn-primary" style="margin-top:2rem">Explore Technology</button>
+    </div>
+    <div class="about-cards fade-in">
+      <div class="acard"><div class="acard-icon">⚡</div><div class="acard-title">Instant Deploy</div><div class="acard-body">Live within minutes of subscribing. Zero setup complexity required from your side.</div></div>
+      <div class="acard"><div class="acard-icon">📈</div><div class="acard-title">Profit Engine</div><div class="acard-body">Every bot is engineered with one objective — maximise your online earnings daily.</div></div>
+      <div class="acard"><div class="acard-icon">🔐</div><div class="acard-title">Secure Core</div><div class="acard-body">Bank-grade encryption protects your data and all transactions at all times.</div></div>
+      <div class="acard"><div class="acard-icon">🌐</div><div class="acard-title">Always Online</div><div class="acard-body">99.7% uptime — your AI never sleeps, never stops, never misses an opportunity.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- SERVICES -->
+<section id="services" class="services">
+  <div class="services-header fade-in">
+    <span class="s-tag">// Rental Plans</span>
+    <h2>Choose Your <span class="c">AI Robot</span> Plan</h2>
+    <p>Flexible monthly rentals for every stage — from first-timers to serious operators scaling their income streams.</p>
+  </div>
+  <div class="plans">
+    <div class="plan fade-in">
+      <div class="plan-top-bar"></div>
+      <div class="plan-name">Starter</div>
+      <div class="plan-desc">Perfect for individuals exploring AI profit automation for the first time.</div>
+      <div class="plan-price"><span class="amount">RM 299</span><span class="period">/ month</span></div>
+      <ul class="plan-features">
+        <li>1 AI Robot Instance</li>
+        <li>Basic Profit Strategy</li>
+        <li>Personal Dashboard</li>
+        <li>Email Support</li>
+        <li>Monthly Performance Report</li>
+      </ul>
+      <button class="plan-btn">Rent Now</button>
+    </div>
+    <div class="plan hot fade-in">
+      <div class="plan-top-bar"></div>
+      <div class="hot-badge">Most Popular</div>
+      <div class="plan-name">Professional</div>
+      <div class="plan-desc">For serious earners who want maximum uptime and advanced strategies.</div>
+      <div class="plan-price"><span class="amount">RM 799</span><span class="period">/ month</span></div>
+      <ul class="plan-features">
+        <li>3 AI Robot Instances</li>
+        <li>Advanced Multi-Strategy</li>
+        <li>Priority Dashboard</li>
+        <li>Live Chat Support</li>
+        <li>Weekly Performance Report</li>
+        <li>Strategy Customisation</li>
+      </ul>
+      <button class="plan-btn">Rent Now</button>
+    </div>
+    <div class="plan fade-in">
+      <div class="plan-top-bar"></div>
+      <div class="plan-name">Enterprise</div>
+      <div class="plan-desc">Tailored solutions for businesses and high-volume operators.</div>
+      <div class="plan-price"><span class="amount">Custom</span><span class="period">pricing</span></div>
+      <ul class="plan-features">
+        <li>Unlimited AI Robots</li>
+        <li>Custom Strategy Build</li>
+        <li>Dedicated Account Manager</li>
+        <li>24/7 Priority Support</li>
+        <li>Real-time Analytics</li>
+        <li>API Integration Available</li>
+      </ul>
+      <button class="plan-btn">Contact Us</button>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div style="text-align:center" class="fade-in">
+    <span class="s-tag">// The Process</span>
+    <h2>Up & Running in <span class="c2">4 Steps</span></h2>
+  </div>
+  <div class="how-wrap">
+    <div class="steps">
+      <div class="step fade-in"><div class="step-dot">01</div><div class="step-title">Choose Plan</div><div class="step-body">Browse our rental tiers and select the AI robot package that fits your goals and budget.</div></div>
+      <div class="step fade-in"><div class="step-dot">02</div><div class="step-title">Onboarding</div><div class="step-body">Complete a brief setup form so we configure your AI to your preferred profit strategy.</div></div>
+      <div class="step fade-in"><div class="step-dot">03</div><div class="step-title">Deploy Robot</div><div class="step-body">Your AI robot goes live in minutes. Monitor performance in real-time via your dashboard.</div></div>
+      <div class="step fade-in"><div class="step-dot">04</div><div class="step-title">Earn Profits</div><div class="step-body">Your bot works 24/7 across online platforms, generating returns while you focus on life.</div></div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div style="text-align:center;max-width:600px;margin:0 auto 1rem;" class="fade-in">
+    <span class="s-tag">// Client Results</span>
+    <h2>Trusted by <span class="c">Real People</span></h2>
+  </div>
+  <div class="testi-grid">
+    <div class="tcard fade-in">
+      <div class="tcard-quote">"</div>
+      <div class="tcard-body">I was skeptical at first but after 3 months on the Professional plan, I've generated consistent returns every single week. The dashboard makes it easy to track everything.</div>
+      <div class="tcard-author"><div class="tcard-avatar">AH</div><div><div class="tcard-name">Ahmad Hafizi</div><div class="tcard-role">Entrepreneur, Kuala Lumpur</div></div></div>
+    </div>
+    <div class="tcard fade-in">
+      <div class="tcard-quote">"</div>
+      <div class="tcard-body">The onboarding was super fast and the support team is very responsive. My AI bot has been running non-stop for 6 months. Highly recommend the Enterprise plan.</div>
+      <div class="tcard-author"><div class="tcard-avatar">SK</div><div><div class="tcard-name">Sarah Khoo</div><div class="tcard-role">Online Investor, Penang</div></div></div>
+    </div>
+    <div class="tcard fade-in">
+      <div class="tcard-quote">"</div>
+      <div class="tcard-body">Started with the Starter plan to test it out — upgraded to Professional after just 2 weeks. The ROI speaks for itself. This is the future of passive income.</div>
+      <div class="tcard-author"><div class="tcard-avatar">RZ</div><div><div class="tcard-name">Rizwan Zulkifli</div><div class="tcard-role">Freelancer, Johor Bahru</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="glow-line"></div>
+
+<!-- FAQ -->
+<section id="faq">
+  <div style="text-align:center" class="fade-in">
+    <span class="s-tag">// FAQ</span>
+    <h2>Common <span class="c">Questions</span></h2>
+  </div>
+  <div class="faq-wrap">
+    <div class="faq-item fade-in">
+      <button class="faq-q" onclick="toggleFaq(this)">How does the AI robot generate profit? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Our AI robots use proprietary algorithms to identify and execute profit opportunities across various online platforms — including automated trading, arbitrage, and digital monetization strategies. The AI runs 24/7 and continuously optimizes based on market conditions.</p></div>
+    </div>
+    <div class="faq-item fade-in">
+      <button class="faq-q" onclick="toggleFaq(this)">Do I need any technical knowledge? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>No technical knowledge is required. Our onboarding process guides you through everything step by step. Once set up, the AI handles all the complex operations automatically — you just monitor the results from your dashboard.</p></div>
+    </div>
+    <div class="faq-item fade-in">
+      <button class="faq-q" onclick="toggleFaq(this)">Can I cancel my rental plan anytime? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Yes, all our rental plans are month-to-month with no long-term commitments. You can cancel, upgrade, or downgrade your plan at any time from your dashboard. Cancellations take effect at the end of your current billing period.</p></div>
+    </div>
+    <div class="faq-item fade-in">
+      <button class="faq-q" onclick="toggleFaq(this)">What kind of returns can I expect? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Returns vary based on market conditions, your chosen strategy, and plan tier. While we cannot guarantee specific figures, our clients on the Professional plan have historically seen positive returns within their first month. All performance data is visible on your real-time dashboard.</p></div>
+    </div>
+    <div class="faq-item fade-in">
+      <button class="faq-q" onclick="toggleFaq(this)">Is my data and money safe? <span class="faq-icon">+</span></button>
+      <div class="faq-a"><p>Absolutely. We use bank-grade AES-256 encryption for all data and transactions. We never store your financial credentials directly — all integrations use secure OAuth tokens. Your privacy and security are our highest priority.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section fade-in">
+  <span class="s-tag" style="display:block;text-align:center;">// Get Started Today</span>
+  <h2>Ready to <span class="c">Deploy</span> Your AI?</h2>
+  <p>Join over 2,400 clients already generating profit with Nexora AI robots. Start with any plan — upgrade anytime.</p>
+  <div class="cta-btns">
+    <button class="btn-primary" onclick="document.getElementById('services').scrollIntoView({behavior:'smooth'})">Choose a Plan</button>
+    <button class="btn-outline">Contact Sales</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <a href="#home" class="logo">NEXORA <span>AI</span></a>
+      <p>AI-powered profit robots for the digital economy. Rent. Deploy. Earn.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li><a href="#about">About Us</a></li>
+        <li><a href="#how">How It Works</a></li>
+        <li><a href="#testimonials">Testimonials</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Plans</h4>
+      <ul>
+        <li><a href="#services">Starter</a></li>
+        <li><a href="#services">Professional</a></li>
+        <li><a href="#services">Enterprise</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Support</h4>
+      <ul>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#">Contact Us</a></li>
+        <li><a href="#">Privacy Policy</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-copy">© 2026 Nexora AI. All rights reserved.</div>
+    <div class="footer-socials">
+      <a class="social-btn" href="#">𝕏</a>
+      <a class="social-btn" href="#">in</a>
+      <a class="social-btn" href="#">tg</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Particle canvas
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+resize();
+window.addEventListener('resize',resize);
+for(let i=0;i<80;i++){particles.push({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*1.2+0.3,vx:(Math.random()-0.5)*0.15,vy:(Math.random()-0.5)*0.15,a:Math.random()*0.5+0.1,c:Math.random()>0.5?'0,212,255':'0,255,204'});}
+function drawParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;
+    if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;
+  });
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// Scroll fade-in
+const observer = new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.12});
+document.querySelectorAll('.fade-in').forEach(el=>observer.observe(el));
+
+// Navbar scroll
+window.addEventListener('scroll',()=>{document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>60);});
+
+// FAQ toggle
+function toggleFaq(btn){
+  const item=btn.parentElement;
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+// Mobile menu
+function toggleMenu(){
+  const links=document.querySelector('.nav-links');
+  const cta=document.querySelector('.nav-cta');
+  if(links.style.display==='flex'){links.style.display='none';cta.style.display='none';}
+  else{links.style.display='flex';links.style.flexDirection='column';links.style.position='fixed';links.style.top='60px';links.style.left='0';links.style.right='0';links.style.background='rgba(3,7,18,0.97)';links.style.padding='1.5rem';links.style.borderBottom='1px solid rgba(0,212,255,0.1)';}
+}
+</script>
+</body>
+</html>
