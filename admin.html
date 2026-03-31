@@ -431,6 +431,50 @@ body{background:var(--bg);color:var(--white);font-family:var(--font);font-size:1
 </head>
 <body>
 
+<!-- PASSWORD GATE -->
+<div id="pwGate" style="position:fixed;inset:0;background:#030712;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">
+  <div style="background:rgba(10,14,28,0.98);border:1px solid rgba(0,212,255,0.2);border-radius:24px;padding:48px 40px;width:380px;text-align:center;box-shadow:0 0 80px rgba(0,212,255,0.1);">
+    <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:#00d4ff;letter-spacing:0.15em;margin-bottom:6px;">NEXORA AI</div>
+    <div style="font-family:'Orbitron',sans-serif;font-size:0.7rem;color:rgba(240,246,255,0.5);letter-spacing:0.2em;margin-bottom:28px;">ADMIN ACCESS ONLY</div>
+    <input id="pwInput" type="password"
+      placeholder="Enter admin password"
+      onkeydown="if(event.key==='Enter')checkPw()"
+      style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:13px 16px;color:#f0f6ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;outline:none;margin-bottom:12px;letter-spacing:0.1em;text-align:center;"
+    />
+    <div id="pwError" style="color:#ef4444;font-size:0.72rem;margin-bottom:12px;display:none;">⚠️ Incorrect password. Try again.</div>
+    <button onclick="checkPw()"
+      style="width:100%;padding:13px;background:linear-gradient(135deg,#00d4ff,#0066ff);border:none;border-radius:10px;color:#fff;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">
+      Access Admin Panel →
+    </button>
+    <div style="margin-top:16px;font-size:0.68rem;color:rgba(240,246,255,0.25);">Unauthorised access is prohibited.</div>
+  </div>
+</div>
+<script>
+// Simple password check — change "NexoraAdmin2026" to your own password
+const ADMIN_PW = "NexoraAdmin2026";
+function checkPw(){
+  const input = document.getElementById('pwInput').value;
+  if(input === ADMIN_PW){
+    document.getElementById('pwGate').style.display='none';
+    sessionStorage.setItem('nexora_admin','1');
+  } else {
+    document.getElementById('pwError').style.display='block';
+    document.getElementById('pwInput').value='';
+    document.getElementById('pwInput').focus();
+    document.getElementById('pwInput').style.borderColor='rgba(239,68,68,0.5)';
+    setTimeout(()=>{document.getElementById('pwInput').style.borderColor='rgba(0,212,255,0.2)';},2000);
+  }
+}
+// If already authenticated this session, skip gate
+if(sessionStorage.getItem('nexora_admin')==='1'){
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('pwGate').style.display='none';
+  });
+}
+</script>
+
+
 <!-- SIDEBAR -->
 <aside class="sidebar">
   <div class="sidebar-logo">
@@ -681,11 +725,11 @@ body{background:var(--bg);color:var(--white);font-family:var(--font);font-size:1
             <th>User</th><th>Plan</th><th>Status</th><th>Joined</th><th>Revenue</th><th>Actions</th>
           </tr></thead>
           <tbody id="usersTable">
-            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#00d4ff,#0066ff);">AH</div><div><div class="td-name">Ahmad Hafizi</div><div class="td-email">ahmad@email.com</div></div></div></td><td><span class="badge pro">Professional</span></td><td><span class="badge active">● Active</span></td><td>Jan 2026</td><td class="txn-amount credit">RM799</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
-            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c5cbf);">SK</div><div><div class="td-name">Sarah Khoo</div><div class="td-email">sarah@email.com</div></div></div></td><td><span class="badge starter">Starter</span></td><td><span class="badge active">● Active</span></td><td>Feb 2026</td><td class="txn-amount credit">RM299</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
-            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">EC</div><div><div class="td-name">Enterprise Corp</div><div class="td-email">admin@enterprise.com</div></div></div></td><td><span class="badge enterprise">Enterprise</span></td><td><span class="badge active">● Active</span></td><td>Dec 2025</td><td class="txn-amount credit">RM2,400</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
-            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#10b981,#00d4ff);">RZ</div><div><div class="td-name">Rizwan Zulkifli</div><div class="td-email">rizwan@email.com</div></div></div></td><td><span class="badge starter">Starter</span></td><td><span class="badge pending">⏳ Pending</span></td><td>Mar 2026</td><td class="txn-amount debit">-RM299</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
-            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#00ffcc,#00d4ff);">LW</div><div><div class="td-name">Lim Wei Hao</div><div class="td-email">lim@email.com</div></div></div></td><td><span class="badge pro">Professional</span></td><td><span class="badge inactive">● Inactive</span></td><td>Nov 2025</td><td style="color:var(--muted2);">RM0</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
+            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#00d4ff,#0066ff);">AH</div><div><div class="td-name">Ahmad Hafizi</div><div class="td-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0b6a63666a6f4b6e666a626725686466">[email&#160;protected]</a></div></div></div></td><td><span class="badge pro">Professional</span></td><td><span class="badge active">● Active</span></td><td>Jan 2026</td><td class="txn-amount credit">RM799</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
+            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#a78bfa,#7c5cbf);">SK</div><div><div class="td-name">Sarah Khoo</div><div class="td-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="24574556454c644149454d480a474b49">[email&#160;protected]</a></div></div></div></td><td><span class="badge starter">Starter</span></td><td><span class="badge active">● Active</span></td><td>Feb 2026</td><td class="txn-amount credit">RM299</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
+            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">EC</div><div><div class="td-name">Enterprise Corp</div><div class="td-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c0a1a4ada9ae80a5aeb4a5b2b0b2a9b3a5eea3afad">[email&#160;protected]</a></div></div></div></td><td><span class="badge enterprise">Enterprise</span></td><td><span class="badge active">● Active</span></td><td>Dec 2025</td><td class="txn-amount credit">RM2,400</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
+            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#10b981,#00d4ff);">RZ</div><div><div class="td-name">Rizwan Zulkifli</div><div class="td-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="9deff4e7eafcf3ddf8f0fcf4f1b3fef2f0">[email&#160;protected]</a></div></div></div></td><td><span class="badge starter">Starter</span></td><td><span class="badge pending">⏳ Pending</span></td><td>Mar 2026</td><td class="txn-amount debit">-RM299</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
+            <tr><td><div class="td-user"><div class="td-avatar" style="background:linear-gradient(135deg,#00ffcc,#00d4ff);">LW</div><div><div class="td-name">Lim Wei Hao</div><div class="td-email"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c3afaaae83a6aea2aaafeda0acae">[email&#160;protected]</a></div></div></div></td><td><span class="badge pro">Professional</span></td><td><span class="badge inactive">● Inactive</span></td><td>Nov 2025</td><td style="color:var(--muted2);">RM0</td><td><div class="action-btns"><button class="btn-sm edit" onclick="openModal('editUser')">Edit</button><button class="btn-sm view" onclick="showToast('Viewing user details')">View</button><button class="btn-sm del" onclick="showToast('User removed')">Remove</button></div></td></tr>
           </tbody>
         </table>
       </div>
@@ -902,7 +946,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--font);font-size:1
   <div class="toast-text" id="toast-text">Action completed!</div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Section navigation
 function showSection(name, el){
   document.querySelectorAll('.section-view').forEach(s=>s.classList.remove('active'));
@@ -975,11 +1019,3 @@ window.addEventListener('load', ()=>{
   // Revenue by plan
   const rp = document.getElementById('revenueByPlan');
   if(rp) new Chart(rp, {
-    type:'bar',
-    data:{labels:['Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[{label:'Starter',data:[18000,22000,26000,28000,31000,34000],backgroundColor:'rgba(0,212,255,0.7)',borderRadius:4},{label:'Pro',data:[26000,30000,36000,42000,46000,48000],backgroundColor:'rgba(167,139,250,0.7)',borderRadius:4},{label:'Enterprise',data:[8000,9000,12000,13000,12000,12200],backgroundColor:'rgba(245,158,11,0.7)',borderRadius:4}]},
-    options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#64748b'}},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#64748b'}}}}
-  });
-});
-</script>
-</body>
-</html>
