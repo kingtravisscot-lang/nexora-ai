@@ -277,7 +277,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
     <div class="gate-title">Sign In Required</div>
     <div class="gate-sub">You need an account to access this feature. Join thousands of clients already generating profit with Nexora AI.</div>
     <div class="gate-btns">
-      <button class="gate-btn-primary" onclick="window.location.href='login.html'">Sign In / Create Account</button>
+      <button class="gate-btn-primary" onclick="window.location.href='login.html?redirect='+encodeURIComponent(window._authDest||'subscribe.html')">Sign In / Create Account</button>
       <button class="gate-btn-secondary" onclick="closeGate()">Maybe Later</button>
     </div>
   </div>
@@ -298,7 +298,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
   </ul>
   <div class="nav-right">
     <button class="nav-signin" onclick="window.location.href='login.html'">Sign In</button>
-    <button class="nav-cta" onclick="requireAuth()">Get Started</button>
+    <button class="nav-cta" onclick="requireAuth('subscribe.html')">Get Started</button>
   </div>
 </nav>
 
@@ -309,7 +309,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
     <h1>RENT AN <span class="c1">AI ROBOT.</span><br>GENERATE <span class="c2">PROFIT.</span></h1>
     <p class="hero-sub">Deploy our proprietary AI robots instantly — engineered to generate income online 24/7. No coding. No complexity. Just results.</p>
     <div class="hero-btns">
-      <button class="btn-primary" onclick="requireAuth()">Start Earning Now</button>
+      <button class="btn-primary" onclick="requireAuth('subscribe.html')">Start Earning Now</button>
       <button class="btn-outline" onclick="document.getElementById('how').scrollIntoView({behavior:'smooth'})">How It Works</button>
     </div>
   </div>
@@ -321,7 +321,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
     </div>
     <div class="ground-glow"></div>
     <div class="bubble" id="bubble">👋 Hi there!</div>
-    <img class="robot-img" src="robot.webp" alt="Nexora Bot" onclick="requireAuth()"/>
+    <img class="robot-img" src="robot.webp" alt="Nexora Bot" onclick="requireAuth('subscribe.html')"/>
   </div>
 </section>
 
@@ -409,7 +409,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
       <div class="plan-price-big">RM 299</div>
       <div class="plan-period">per month</div>
       <div style="font-size:0.78rem;color:var(--muted);margin:1rem 0;line-height:1.6;">1 AI Robot · Basic Strategy · Email Support · Monthly Report</div>
-      <button class="plan-cta" onclick="requireAuth()">Get Started</button>
+      <button class="plan-cta" onclick="requireAuth('subscribe.html')">Get Started</button>
     </div>
     <div class="plan-prev hot fade-in" style="transform:scale(1.04);">
       <div style="font-size:0.55rem;font-family:var(--font-h);color:var(--cyan);letter-spacing:0.2em;margin-bottom:8px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.2);display:inline-block;padding:3px 10px;border-radius:20px;">MOST POPULAR</div>
@@ -418,7 +418,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
       <div class="plan-price-big">RM 799</div>
       <div class="plan-period">per month</div>
       <div style="font-size:0.78rem;color:var(--muted);margin:1rem 0;line-height:1.6;">3 AI Robots · Advanced Strategy · Live Chat · Weekly Report</div>
-      <button class="plan-cta" onclick="requireAuth()">Get Started</button>
+      <button class="plan-cta" onclick="requireAuth('subscribe.html')">Get Started</button>
     </div>
     <div class="plan-prev enterprise fade-in">
       <div class="plan-prev-icon">🏢</div>
@@ -426,7 +426,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
       <div class="plan-price-big" style="font-size:1.5rem;color:var(--gold);">Custom</div>
       <div class="plan-period">tailored pricing</div>
       <div style="font-size:0.78rem;color:var(--muted);margin:1rem 0;line-height:1.6;">Unlimited Robots · Custom Strategy · Dedicated Manager · API Access</div>
-      <button class="plan-cta" onclick="requireAuth()">Contact Sales</button>
+      <button class="plan-cta" onclick="requireAuth('subscribe.html')">Contact Sales</button>
     </div>
   </div>
   <div style="text-align:center;margin-top:2rem;" class="fade-in">
@@ -496,7 +496,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
     <h2>Ready to <span class="c">Deploy</span> Your AI?</h2>
     <p>Join over 2,400 clients already generating profit with Nexora AI. Start with any plan — upgrade anytime.</p>
     <div class="cta-btns">
-      <button class="btn-primary" onclick="requireAuth()">Start Earning Now</button>
+      <button class="btn-primary" onclick="requireAuth('subscribe.html')">Start Earning Now</button>
       <button class="btn-outline" onclick="window.location.href='subscribe.html'">View All Plans</button>
     </div>
   </div>
@@ -512,7 +512,7 @@ footer{position:relative;z-index:1;padding:3rem 5rem;border-top:1px solid var(--
       </div>
       <p>AI-powered profit robots for the digital economy. Rent. Deploy. Earn.</p>
     </div>
-    <div class="footer-col"><h4>Company</h4><ul><li><a href="#about">About Us</a></li><li><a href="#how">How It Works</a></li><li><a href="#testimonials">Testimonials</a></li><li><a href="#" onclick="requireAuth()">Dashboard</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="#about">About Us</a></li><li><a href="#how">How It Works</a></li><li><a href="#testimonials">Testimonials</a></li><li><a href="#" onclick="requireAuth('subscribe.html')">Dashboard</a></li></ul></div>
     <div class="footer-col"><h4>Plans</h4><ul><li><a href="subscribe.html">Starter — RM299</a></li><li><a href="subscribe.html">Professional — RM799</a></li><li><a href="subscribe.html">Enterprise — Custom</a></li></ul></div>
     <div class="footer-col"><h4>Support</h4><ul><li><a href="#faq">FAQ</a></li><li><a href="contact.html">Contact Us</a></li><li><a href="#">WhatsApp</a></li><li><a href="#">Privacy Policy</a></li></ul></div>
   </div>
@@ -567,7 +567,10 @@ function toggleFaq(btn){
 }
 
 // Auth gate
-function requireAuth(){document.getElementById('gateOverlay').classList.add('show');}
+function requireAuth(dest){
+  window._authDest = dest || 'subscribe.html';
+  document.getElementById('gateOverlay').classList.add('show');
+}
 function closeGate(){document.getElementById('gateOverlay').classList.remove('show');}
 document.getElementById('gateOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('gateOverlay'))closeGate();});
 

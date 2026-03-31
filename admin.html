@@ -781,24 +781,25 @@ if(sessionStorage.getItem('nexora_admin')==='1'){
     <!-- ===== CONTENT ===== -->
     <div class="section-view" id="sec-content">
       <div class="card" style="margin-bottom:16px;">
-        <div class="card-header"><div class="card-title">Edit Website Content</div><button class="btn-primary" onclick="showToast('Changes saved successfully!')">Save Changes</button></div>
+        <div class="card-header"><div class="card-title">Edit Website Content</div><button class="btn-primary" onclick="saveContent()">💾 Save All Changes</button></div>
+        <div id="contentSaveMsg" style="display:none;background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.3);border-radius:10px;padding:10px 14px;font-size:0.78rem;color:#10b981;margin-bottom:14px;">✅ Content saved to database!</div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Hero Headline</label><input class="form-input" value="RENT AN AI ROBOT. GENERATE PROFIT."/></div>
-          <div class="form-group"><label class="form-label">Hero Subtext</label><input class="form-input" value="Deploy our AI robots instantly — 24/7. No coding."/></div>
+          <div class="form-group"><label class="form-label">Hero Headline</label><input class="form-input" id="content-heroHeadline" value="RENT AN AI ROBOT. GENERATE PROFIT."/></div>
+          <div class="form-group"><label class="form-label">Hero Subtext</label><input class="form-input" id="content-heroSubtext" value="Deploy our AI robots instantly — 24/7. No coding."/></div>
         </div>
-        <div class="form-group"><label class="form-label">About Us Text</label><textarea class="form-input" rows="3" style="resize:vertical;">Nexora AI is an advanced automation company specializing in AI-powered profit robots for the digital economy.</textarea></div>
+        <div class="form-group"><label class="form-label">About Us Text</label><textarea class="form-input" id="content-aboutText" rows="3" style="resize:vertical;">Nexora AI is an advanced automation company specializing in AI-powered profit robots for the digital economy.</textarea></div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Contact Email</label><input class="form-input" value="support@nexoraai.com"/></div>
-          <div class="form-group"><label class="form-label">WhatsApp Number</label><input class="form-input" value="+60 12-345 6789"/></div>
+          <div class="form-group"><label class="form-label">Contact Email</label><input class="form-input" id="content-contactEmail" value="support@nexoraai.com"/></div>
+          <div class="form-group"><label class="form-label">WhatsApp Number</label><input class="form-input" id="content-whatsapp" value="+60 12-345 6789"/></div>
         </div>
-        <div class="form-group"><label class="form-label">Footer TNC Text</label><textarea class="form-input" rows="2" style="resize:vertical;">© 2026 Nexora AI. All rights reserved. By using our service you agree to our Terms & Conditions.</textarea></div>
+        <div class="form-group"><label class="form-label">Footer TNC Text</label><textarea class="form-input" id="content-footerTnc" rows="2" style="resize:vertical;">© 2026 Nexora AI. All rights reserved. By using our service you agree to our Terms & Conditions.</textarea></div>
       </div>
       <div class="card">
         <div class="card-header"><div class="card-title">Stats Display</div></div>
         <div class="form-row">
-          <div class="form-group"><label class="form-label">Active Clients</label><input class="form-input" value="2,400+"/></div>
-          <div class="form-group"><label class="form-label">Profit Generated</label><input class="form-input" value="$18M+"/></div>
-          <div class="form-group"><label class="form-label">Uptime</label><input class="form-input" value="99.7%"/></div>
+          <div class="form-group"><label class="form-label">Active Clients</label><input class="form-input" id="content-stat1" value="2,400+"/></div>
+          <div class="form-group"><label class="form-label">Profit Generated</label><input class="form-input" id="content-stat2" value="$18M+"/></div>
+          <div class="form-group"><label class="form-label">Uptime</label><input class="form-input" id="content-stat3" value="99.7%"/></div>
         </div>
       </div>
     </div>
