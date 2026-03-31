@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexora AI — FAQ</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#030712;--card:rgba(10,14,28,0.95);--cyan:#00d4ff;--cyan2:#00ffcc;--purple:#7c5cbf;--purple2:#a78bfa;--border:rgba(0,212,255,0.12);--white:#f0f6ff;--muted:rgba(240,246,255,0.5);--font:'Plus Jakarta Sans',sans-serif;--font-h:'Orbitron',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font);overflow-x:hidden;}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:70px 70px;mask-image:radial-gradient(ellipse 80% 80% at center,black,transparent);}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:rgba(0,212,255,0.05);top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:rgba(124,92,191,0.06);bottom:-100px;left:-100px;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 5rem;background:rgba(3,7,18,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:0.7rem;font-weight:700;color:#fff;}
+.nav-logo-text{font-family:var(--font-h);font-size:1rem;font-weight:700;color:var(--cyan);letter-spacing:0.1em;}
+.nav-logo-text span{color:var(--white);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;font-family:var(--font-h);}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);}
+.nav-btn{padding:0.6rem 1.4rem;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;color:#fff;font-family:var(--font-h);font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:8px;}
+.hero{position:relative;z-index:1;padding:140px 5rem 60px;text-align:center;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--cyan2);padding:0.4rem 1.2rem;border:1px solid rgba(0,255,204,0.25);background:rgba(0,255,204,0.05);border-radius:30px;margin-bottom:1.5rem;font-family:var(--font-h);}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan2);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+h1{font-family:var(--font-h);font-size:clamp(1.8rem,4vw,3rem);font-weight:900;line-height:1.1;margin-bottom:1rem;}
+h1 .c{color:var(--cyan);text-shadow:0 0 30px rgba(0,212,255,0.4);}
+.hero-sub{font-size:0.9rem;color:var(--muted);max-width:500px;margin:0 auto 2rem;}
+.search-wrap{max-width:500px;margin:0 auto;position:relative;}
+.search-input{width:100%;background:rgba(0,0,0,0.4);border:1px solid var(--border);border-radius:14px;padding:14px 20px 14px 50px;color:var(--white);font-family:var(--font);font-size:0.88rem;outline:none;transition:all 0.2s;}
+.search-input:focus{border-color:rgba(0,212,255,0.4);box-shadow:0 0 0 3px rgba(0,212,255,0.06);}
+.search-input::placeholder{color:rgba(240,246,255,0.25);}
+.search-icon{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--muted);font-size:1rem;}
+.main{position:relative;z-index:1;padding:2rem 5rem 6rem;max-width:900px;margin:0 auto;}
+.faq-categories{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2.5rem;justify-content:center;}
+.cat-btn{padding:8px 18px;border-radius:20px;font-size:0.72rem;font-family:var(--font-h);letter-spacing:0.1em;cursor:pointer;transition:all 0.2s;border:1px solid var(--border);background:transparent;color:var(--muted);}
+.cat-btn.active,.cat-btn:hover{background:rgba(0,212,255,0.1);border-color:rgba(0,212,255,0.3);color:var(--cyan);}
+.faq-section{margin-bottom:3rem;}
+.faq-section-title{font-family:var(--font-h);font-size:0.68rem;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--cyan2);margin-bottom:1rem;padding-bottom:0.5rem;border-bottom:1px solid rgba(0,255,204,0.15);}
+.faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:10px;overflow:hidden;transition:border-color 0.3s;}
+.faq-item.open{border-color:rgba(0,212,255,0.3);}
+.faq-q{width:100%;padding:18px 22px;display:flex;justify-content:space-between;align-items:center;background:transparent;border:none;color:var(--white);font-family:var(--font);font-size:0.88rem;font-weight:600;text-align:left;cursor:pointer;transition:color 0.2s;gap:12px;}
+.faq-q:hover{color:var(--cyan);}
+.faq-icon{width:26px;height:26px;border-radius:8px;flex-shrink:0;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.9rem;color:var(--cyan);transition:transform 0.3s;}
+.faq-item.open .faq-icon{transform:rotate(45deg);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+.faq-item.open .faq-a{max-height:300px;}
+.faq-a p{padding:0 22px 18px;font-size:0.82rem;color:var(--muted);line-height:1.85;}
+.faq-a a{color:var(--cyan);text-decoration:none;}
+.cta-section{position:relative;z-index:1;padding:0 5rem 6rem;max-width:900px;margin:0 auto;}
+.cta-card{background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(124,92,191,0.04));border:1px solid rgba(0,212,255,0.15);border-radius:24px;padding:48px;text-align:center;}
+.cta-card h2{font-family:var(--font-h);font-size:1.2rem;font-weight:700;margin-bottom:8px;}
+.cta-card p{font-size:0.85rem;color:var(--muted);margin-bottom:1.8rem;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{padding:12px 28px;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;color:#fff;font-family:var(--font-h);font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border-radius:10px;transition:all 0.3s;}
+.btn-primary:hover{box-shadow:0 0 30px rgba(0,212,255,0.5);transform:translateY(-2px);}
+.btn-outline{padding:12px 28px;background:transparent;border:1px solid var(--border);color:var(--white);font-family:var(--font-h);font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border-radius:10px;transition:all 0.3s;}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan);}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:2rem 5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:0.7rem;color:var(--muted);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{font-size:0.7rem;color:var(--muted);text-decoration:none;transition:color 0.3s;}
+.footer-links a:hover{color:var(--cyan);}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+.no-results{text-align:center;padding:3rem;color:var(--muted);font-size:0.85rem;display:none;}
+@media(max-width:900px){nav{padding:1rem 1.5rem;}.nav-links{display:none;}.hero,.main,.cta-section{padding-left:1.5rem;padding-right:1.5rem;}footer{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<nav>
+  <a class="nav-logo" href="index.html"><div class="nav-logo-icon">N</div><div class="nav-logo-text">NEXORA <span>AI</span></div></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="subscribe.html">Plans</a></li>
+    <li><a href="faq.html" class="active">FAQ</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <button class="nav-btn" onclick="window.location.href='login.html'">Sign In</button>
+</nav>
+<section class="hero">
+  <div class="hero-tag">Help Center</div>
+  <h1>Frequently Asked <span class="c">Questions</span></h1>
+  <p class="hero-sub">Find answers to common questions about Nexora AI robots, plans, payments, and more.</p>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" type="text" placeholder="Search questions..." oninput="searchFaq(this.value)" id="searchInput"/>
+  </div>
+</section>
+<div class="main">
+  <div class="faq-categories">
+    <button class="cat-btn active" onclick="filterCat('all',this)">All</button>
+    <button class="cat-btn" onclick="filterCat('general',this)">General</button>
+    <button class="cat-btn" onclick="filterCat('plans',this)">Plans & Pricing</button>
+    <button class="cat-btn" onclick="filterCat('technical',this)">Technical</button>
+    <button class="cat-btn" onclick="filterCat('payment',this)">Payment</button>
+    <button class="cat-btn" onclick="filterCat('security',this)">Security</button>
+  </div>
+  <div id="noResults" class="no-results">No questions found. Try a different search term.</div>
+
+  <div class="faq-section" data-cat="general">
+    <div class="faq-section-title">General</div>
+    <div class="faq-item fade-in" data-cat="general"><button class="faq-q" onclick="toggleFaq(this)">What is Nexora AI? <div class="faq-icon">+</div></button><div class="faq-a"><p>Nexora AI is an AI-powered profit automation platform. We provide AI robots that you rent and deploy to generate passive income online — 24/7, with no technical knowledge required. Simply choose a plan, deploy your bot, and monitor earnings from your dashboard.</p></div></div>
+    <div class="faq-item fade-in" data-cat="general"><button class="faq-q" onclick="toggleFaq(this)">How does the AI robot generate profit? <div class="faq-icon">+</div></button><div class="faq-a"><p>Our AI robots use proprietary algorithms to identify and execute profit opportunities across various online platforms — including automated digital strategies, arbitrage, and monetisation channels. The AI runs continuously and optimises its approach based on performance data.</p></div></div>
+    <div class="faq-item fade-in" data-cat="general"><button class="faq-q" onclick="toggleFaq(this)">Do I need any technical knowledge? <div class="faq-icon">+</div></button><div class="faq-a"><p>Absolutely none. Our onboarding guides you step by step through the setup. Once deployed, the AI handles everything automatically. You just log in to your dashboard to monitor results, view reports, and manage your subscription.</p></div></div>
+    <div class="faq-item fade-in" data-cat="general"><button class="faq-q" onclick="toggleFaq(this)">How quickly can I get started? <div class="faq-icon">+</div></button><div class="faq-a"><p>Very fast — most clients are live within minutes of signing up. After selecting your plan and completing payment, your AI robot is deployed and begins operating immediately. You can monitor its activity in real-time from your dashboard.</p></div></div>
+  </div>
+
+  <div class="faq-section" data-cat="plans">
+    <div class="faq-section-title">Plans & Pricing</div>
+    <div class="faq-item fade-in" data-cat="plans"><button class="faq-q" onclick="toggleFaq(this)">What plans are available? <div class="faq-icon">+</div></button><div class="faq-a"><p>We offer three plans: <strong style="color:var(--cyan)">Starter (RM 299/mo)</strong> — 1 AI robot, basic strategy, email support. <strong style="color:var(--purple2)">Professional (RM 799/mo)</strong> — 3 robots, advanced strategy, live chat support. <strong style="color:#f59e0b">Enterprise</strong> — custom pricing, unlimited robots, dedicated manager. <a href="subscribe.html">View full plan comparison →</a></p></div></div>
+    <div class="faq-item fade-in" data-cat="plans"><button class="faq-q" onclick="toggleFaq(this)">Can I upgrade or downgrade my plan? <div class="faq-icon">+</div></button><div class="faq-a"><p>Yes! You can upgrade or downgrade your plan at any time from your dashboard. Upgrades take effect immediately (and we prorate the difference). Downgrades take effect at the start of your next billing cycle.</p></div></div>
+    <div class="faq-item fade-in" data-cat="plans"><button class="faq-q" onclick="toggleFaq(this)">Is there a free trial? <div class="faq-icon">+</div></button><div class="faq-a"><p>We don't offer a free trial, but the Professional plan includes a 14-day money-back guarantee. If you're not satisfied within 14 days of subscribing, we'll refund your full payment — no questions asked.</p></div></div>
+    <div class="faq-item fade-in" data-cat="plans"><button class="faq-q" onclick="toggleFaq(this)">Do you offer annual billing? <div class="faq-icon">+</div></button><div class="faq-a"><p>Yes! Choosing annual billing gives you a 20% discount on Starter and Professional plans. You'll be billed once per year at the discounted rate. Enterprise clients can negotiate custom billing terms.</p></div></div>
+    <div class="faq-item fade-in" data-cat="plans"><button class="faq-q" onclick="toggleFaq(this)">Can I cancel anytime? <div class="faq-icon">+</div></button><div class="faq-a"><p>Absolutely. All plans are month-to-month (or annual if you choose). You can cancel at any time from your dashboard with no cancellation fees. Your service continues until the end of your current billing period.</p></div></div>
+  </div>
+
+  <div class="faq-section" data-cat="technical">
+    <div class="faq-section-title">Technical</div>
+    <div class="faq-item fade-in" data-cat="technical"><button class="faq-q" onclick="toggleFaq(this)">What is the uptime guarantee? <div class="faq-icon">+</div></button><div class="faq-a"><p>We guarantee 99.7% uptime for all AI robots. Our infrastructure is built on enterprise-grade servers with automated failover and redundancy. In the rare event of downtime, Enterprise clients receive compensation per our SLA terms.</p></div></div>
+    <div class="faq-item fade-in" data-cat="technical"><button class="faq-q" onclick="toggleFaq(this)">Can I customise my AI robot's strategy? <div class="faq-icon">+</div></button><div class="faq-a"><p>Strategy customisation is available on Professional and Enterprise plans. You can adjust risk parameters, operating hours, and specific channels from your dashboard. Our team assists Enterprise clients in building fully custom strategies.</p></div></div>
+    <div class="faq-item fade-in" data-cat="technical"><button class="faq-q" onclick="toggleFaq(this)">How do I monitor my AI robot's performance? <div class="faq-icon">+</div></button><div class="faq-a"><p>All plans include a real-time dashboard where you can monitor your AI's activity, earnings, and performance metrics. Professional plans receive weekly automated reports, and Enterprise clients get daily reports plus a dedicated account manager.</p></div></div>
+  </div>
+
+  <div class="faq-section" data-cat="payment">
+    <div class="faq-section-title">Payment</div>
+    <div class="faq-item fade-in" data-cat="payment"><button class="faq-q" onclick="toggleFaq(this)">What payment methods are accepted? <div class="faq-icon">+</div></button><div class="faq-a"><p>We accept credit/debit cards (Visa, Mastercard), online banking transfer (FPX), TNG eWallet, and direct bank transfer. Enterprise clients can also pay via invoice with net-30 payment terms.</p></div></div>
+    <div class="faq-item fade-in" data-cat="payment"><button class="faq-q" onclick="toggleFaq(this)">How does billing work? <div class="faq-icon">+</div></button><div class="faq-a"><p>For monthly plans, you're billed on the same date each month from when you subscribed. For annual plans, you're billed once per year. You'll receive a receipt by email after each successful payment.</p></div></div>
+    <div class="faq-item fade-in" data-cat="payment"><button class="faq-q" onclick="toggleFaq(this)">What is your refund policy? <div class="faq-icon">+</div></button><div class="faq-a"><p>Professional plan subscribers can request a full refund within 14 days of their first payment. For subsequent billing cycles, refunds are not available. Enterprise clients receive a 30-day guarantee. Please <a href="contact.html">contact support</a> to process a refund request.</p></div></div>
+  </div>
+
+  <div class="faq-section" data-cat="security">
+    <div class="faq-section-title">Security & Privacy</div>
+    <div class="faq-item fade-in" data-cat="security"><button class="faq-q" onclick="toggleFaq(this)">Is my data safe with Nexora AI? <div class="faq-icon">+</div></button><div class="faq-a"><p>Yes. We use AES-256 encryption for all data at rest and TLS 1.3 for data in transit. We never store financial credentials directly. Our servers are hosted on enterprise-grade infrastructure with strict access controls and regular security audits.</p></div></div>
+    <div class="faq-item fade-in" data-cat="security"><button class="faq-q" onclick="toggleFaq(this)">Do you share my data with third parties? <div class="faq-icon">+</div></button><div class="faq-a"><p>No. We never sell or share your personal data with third parties for marketing purposes. We only share data with essential service providers (e.g. payment processors) necessary to operate our platform. Please read our <a href="#">Privacy Policy</a> for full details.</p></div></div>
+    <div class="faq-item fade-in" data-cat="security"><button class="faq-q" onclick="toggleFaq(this)">How do I delete my account? <div class="faq-icon">+</div></button><div class="faq-a"><p>You can request account deletion from your dashboard settings or by emailing <a href="mailto:support@nexoraai.com">support@nexoraai.com</a>. We will permanently delete your data within 30 days of your request, in accordance with PDPA requirements.</p></div></div>
+  </div>
+</div>
+
+<div class="cta-section fade-in">
+  <div class="cta-card">
+    <h2>Still have questions?</h2>
+    <p>Our support team is ready to help. Reach out via email or WhatsApp.</p>
+    <div class="cta-btns">
+      <button class="btn-primary" onclick="window.location.href='contact.html'">Contact Support</button>
+      <button class="btn-outline" onclick="window.location.href='subscribe.html'">View Plans</button>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-copy">© 2026 Nexora AI. All rights reserved.</div>
+  <div class="footer-links"><a href="#">Terms</a><a href="#">Privacy</a><a href="index.html">Home</a></div>
+</footer>
+<script>
+const canvas=document.getElementById('bgCanvas');const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const pts=[];for(let i=0;i<60;i++)pts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2+0.3,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:Math.random()*.4+.1,c:Math.random()>.5?'0,212,255':'124,92,191'});
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;});requestAnimationFrame(draw);}draw();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+function toggleFaq(btn){const ans=btn.nextElementSibling;const icon=btn.querySelector('.faq-icon');const isOpen=ans.style.maxHeight&&ans.style.maxHeight!=='0px';document.querySelectorAll('.faq-a').forEach(a=>a.style.maxHeight='0px');document.querySelectorAll('.faq-icon').forEach(i=>{i.textContent='+';i.style.transform='rotate(0deg)';});document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));if(!isOpen){ans.style.maxHeight=ans.scrollHeight+'px';icon.textContent='−';icon.style.transform='rotate(180deg)';btn.parentElement.classList.add('open');}}
+function filterCat(cat,el){document.querySelectorAll('.cat-btn').forEach(b=>b.classList.remove('active'));el.classList.add('active');document.querySelectorAll('.faq-item').forEach(item=>{if(cat==='all'||item.dataset.cat===cat){item.style.display='';}else{item.style.display='none';}});document.querySelectorAll('.faq-section').forEach(sec=>{const visible=sec.querySelectorAll('.faq-item:not([style*="none"])').length;sec.style.display=visible>0?'':'none';});}
+function searchFaq(q){const query=q.toLowerCase().trim();let count=0;document.querySelectorAll('.faq-item').forEach(item=>{const text=item.textContent.toLowerCase();if(query===''||text.includes(query)){item.style.display='';count++;}else{item.style.display='none';}});document.querySelectorAll('.faq-section').forEach(sec=>{const visible=sec.querySelectorAll('.faq-item:not([style*="none"])').length;sec.style.display=visible>0?'':'none';});document.getElementById('noResults').style.display=count===0?'block':'none';}
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexora AI — About Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#030712;--card:rgba(10,14,28,0.95);--cyan:#00d4ff;--cyan2:#00ffcc;--purple:#7c5cbf;--purple2:#a78bfa;--green:#10b981;--gold:#f59e0b;--border:rgba(0,212,255,0.12);--white:#f0f6ff;--muted:rgba(240,246,255,0.5);--font:'Plus Jakarta Sans',sans-serif;--font-h:'Orbitron',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font);overflow-x:hidden;}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:70px 70px;mask-image:radial-gradient(ellipse 80% 80% at center,black,transparent);}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:rgba(0,212,255,0.05);top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:rgba(124,92,191,0.06);bottom:-100px;left:-100px;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 5rem;background:rgba(3,7,18,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:0.7rem;font-weight:700;color:#fff;}
+.nav-logo-text{font-family:var(--font-h);font-size:1rem;font-weight:700;color:var(--cyan);letter-spacing:0.1em;}
+.nav-logo-text span{color:var(--white);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;font-family:var(--font-h);}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);}
+.nav-btn{padding:0.6rem 1.4rem;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;color:#fff;font-family:var(--font-h);font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:8px;}
+.hero{position:relative;z-index:1;padding:140px 5rem 80px;text-align:center;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--cyan2);padding:0.4rem 1.2rem;border:1px solid rgba(0,255,204,0.25);background:rgba(0,255,204,0.05);border-radius:30px;margin-bottom:1.5rem;font-family:var(--font-h);}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan2);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+h1{font-family:var(--font-h);font-size:clamp(1.8rem,4vw,3rem);font-weight:900;line-height:1.1;margin-bottom:1rem;}
+h1 .c{color:var(--cyan);text-shadow:0 0 30px rgba(0,212,255,0.4);}
+h1 .c2{color:var(--cyan2);}
+.hero-sub{font-size:0.95rem;color:var(--muted);max-width:600px;margin:0 auto;line-height:1.8;}
+section{position:relative;z-index:1;padding:4rem 5rem;}
+.s-tag{font-size:0.6rem;letter-spacing:0.3em;text-transform:uppercase;color:var(--cyan2);margin-bottom:0.8rem;display:block;font-family:var(--font-h);}
+h2{font-family:var(--font-h);font-size:clamp(1.4rem,3vw,2.2rem);font-weight:700;margin-bottom:1.2rem;}
+h2 .c{color:var(--cyan);}
+.glow-line{height:1px;background:linear-gradient(90deg,transparent,var(--cyan),var(--cyan2),transparent);opacity:0.1;margin:0;}
+.mission-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;max-width:1100px;margin:0 auto;}
+.mission-text p{font-size:0.9rem;color:var(--muted);line-height:1.85;margin-bottom:1.2rem;}
+.mission-stats{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.mstat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;transition:all 0.3s;}
+.mstat:hover{border-color:rgba(0,212,255,0.25);transform:translateY(-3px);}
+.mstat-num{font-family:var(--font-h);font-size:1.8rem;font-weight:900;color:var(--cyan);margin-bottom:4px;text-shadow:0 0 20px rgba(0,212,255,0.3);}
+.mstat-label{font-size:0.72rem;color:var(--muted);letter-spacing:0.1em;text-transform:uppercase;font-family:var(--font-h);}
+.values-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin:2.5rem auto 0;}
+.value-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;transition:all 0.3s;position:relative;overflow:hidden;}
+.value-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),transparent);opacity:0;transition:opacity 0.3s;}
+.value-card:hover{border-color:rgba(0,212,255,0.2);transform:translateY(-4px);}
+.value-card:hover::before{opacity:1;}
+.value-icon{font-size:1.8rem;margin-bottom:1rem;}
+.value-title{font-family:var(--font-h);font-size:0.72rem;font-weight:600;color:var(--white);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:0.6rem;}
+.value-desc{font-size:0.82rem;color:var(--muted);line-height:1.7;}
+.team-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;max-width:1100px;margin:2.5rem auto 0;}
+.team-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;text-align:center;transition:all 0.3s;}
+.team-card:hover{border-color:rgba(0,212,255,0.2);transform:translateY(-4px);}
+.team-avatar{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:1.1rem;font-weight:700;color:#fff;margin:0 auto 14px;box-shadow:0 0 20px rgba(0,212,255,0.2);}
+.team-name{font-family:var(--font-h);font-size:0.72rem;font-weight:600;color:var(--white);letter-spacing:0.08em;margin-bottom:4px;}
+.team-role{font-size:0.72rem;color:var(--cyan);margin-bottom:8px;}
+.team-bio{font-size:0.75rem;color:var(--muted);line-height:1.6;}
+.tech-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:1100px;margin:2.5rem auto 0;}
+.tech-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;align-items:center;gap:14px;transition:all 0.3s;}
+.tech-card:hover{border-color:rgba(0,212,255,0.2);}
+.tech-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+.tech-name{font-family:var(--font-h);font-size:0.65rem;font-weight:600;color:var(--white);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:3px;}
+.tech-desc{font-size:0.75rem;color:var(--muted);}
+.cta-card{background:linear-gradient(135deg,rgba(0,212,255,0.06),rgba(124,92,191,0.04));border:1px solid rgba(0,212,255,0.15);border-radius:24px;padding:56px;text-align:center;max-width:900px;margin:0 auto;}
+.cta-card h2{margin-bottom:1rem;}
+.cta-card p{font-size:0.9rem;color:var(--muted);max-width:500px;margin:0 auto 2rem;line-height:1.7;}
+.cta-btns{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;}
+.btn-primary{padding:13px 28px;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;color:#fff;font-family:var(--font-h);font-size:0.6rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border-radius:10px;transition:all 0.3s;}
+.btn-primary:hover{box-shadow:0 0 30px rgba(0,212,255,0.5);transform:translateY(-2px);}
+.btn-outline{padding:13px 28px;background:transparent;border:1px solid var(--border);color:var(--white);font-family:var(--font-h);font-size:0.6rem;font-weight:600;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;border-radius:10px;transition:all 0.3s;}
+.btn-outline:hover{border-color:var(--cyan);color:var(--cyan);}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:2rem 5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:0.7rem;color:var(--muted);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{font-size:0.7rem;color:var(--muted);text-decoration:none;transition:color 0.3s;}
+.footer-links a:hover{color:var(--cyan);}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:960px){nav{padding:1rem 1.5rem;}.nav-links{display:none;}section,.hero{padding-left:1.5rem;padding-right:1.5rem;}.mission-grid,.values-grid,.team-grid,.tech-grid{grid-template-columns:1fr 1fr;gap:1.5rem;}.mission-grid{grid-template-columns:1fr;}footer{padding:2rem 1.5rem;}}
+@media(max-width:600px){.values-grid,.team-grid,.tech-grid{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<nav>
+  <a class="nav-logo" href="index.html"><div class="nav-logo-icon">N</div><div class="nav-logo-text">NEXORA <span>AI</span></div></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html" class="active">About</a></li>
+    <li><a href="subscribe.html">Plans</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <button class="nav-btn" onclick="window.location.href='login.html'">Sign In</button>
+</nav>
+<section class="hero">
+  <div class="hero-tag">Our Story</div>
+  <h1>The Future of <span class="c">Passive Income</span><br>Starts <span class="c2">Here</span></h1>
+  <p class="hero-sub">Nexora AI was built with one mission — to make AI-powered profit automation accessible to everyone, not just the technically elite.</p>
+</section>
+<div class="glow-line"></div>
+<section>
+  <div class="mission-grid">
+    <div class="mission-text fade-in">
+      <span class="s-tag">// Our Mission</span>
+      <h2>Democratising <span class="c">AI Wealth</span></h2>
+      <p>We started Nexora AI because we saw a gap — powerful AI tools existed for institutions and hedge funds, but ordinary people were locked out. We built a platform that levels the playing field.</p>
+      <p>Our proprietary AI robots are trained on years of market data, continuously refined by our engineering team, and designed to operate with minimal oversight. We handle the complexity so you don't have to.</p>
+      <p>Today, over 2,400 clients across Malaysia and Southeast Asia trust Nexora AI to run their automated income strategies — generating over $18 million in combined profits.</p>
+    </div>
+    <div class="mission-stats fade-in">
+      <div class="mstat"><div class="mstat-num">2,400+</div><div class="mstat-label">Active Clients</div></div>
+      <div class="mstat"><div class="mstat-num">$18M+</div><div class="mstat-label">Generated</div></div>
+      <div class="mstat"><div class="mstat-num">99.7%</div><div class="mstat-label">Uptime</div></div>
+      <div class="mstat"><div class="mstat-num">2022</div><div class="mstat-label">Founded</div></div>
+    </div>
+  </div>
+</section>
+<div class="glow-line"></div>
+<section>
+  <div style="text-align:center;max-width:1100px;margin:0 auto;" class="fade-in">
+    <span class="s-tag">// Core Values</span>
+    <h2>What We <span class="c">Stand For</span></h2>
+  </div>
+  <div class="values-grid">
+    <div class="value-card fade-in"><div class="value-icon">🎯</div><div class="value-title">Results-Driven</div><div class="value-desc">Every decision we make is measured against one standard: does it generate better results for our clients? We optimise relentlessly.</div></div>
+    <div class="value-card fade-in"><div class="value-icon">🔐</div><div class="value-title">Security First</div><div class="value-desc">Bank-grade encryption, rigorous access controls, and continuous monitoring ensure your data and earnings are always protected.</div></div>
+    <div class="value-card fade-in"><div class="value-icon">🌐</div><div class="value-title">Always On</div><div class="value-desc">Our infrastructure is built for zero downtime. 99.7% uptime is our standard, not our goal — your AI never sleeps.</div></div>
+    <div class="value-card fade-in"><div class="value-icon">🤝</div><div class="value-title">Client-Centric</div><div class="value-desc">We exist to serve our clients. Every feature, every update, and every support response is guided by what matters most to you.</div></div>
+    <div class="value-card fade-in"><div class="value-icon">🔬</div><div class="value-title">Innovation</div><div class="value-desc">Our R&D team continuously improves our AI models. What works today will be even better tomorrow — we never stop optimising.</div></div>
+    <div class="value-card fade-in"><div class="value-icon">💡</div><div class="value-title">Transparency</div><div class="value-desc">No hidden fees, no misleading promises. You see exactly what your AI is doing and earning, in real-time, at all times.</div></div>
+  </div>
+</section>
+<div class="glow-line"></div>
+<section>
+  <div style="text-align:center;max-width:1100px;margin:0 auto;" class="fade-in">
+    <span class="s-tag">// Technology</span>
+    <h2>Built on <span class="c">Cutting-Edge</span> Tech</h2>
+    <p style="font-size:0.88rem;color:var(--muted);max-width:550px;margin:0 auto;">Our platform combines the latest in machine learning, cloud infrastructure, and financial engineering.</p>
+  </div>
+  <div class="tech-grid">
+    <div class="tech-card fade-in"><div class="tech-icon" style="background:rgba(0,212,255,0.1);">🧠</div><div><div class="tech-name">Deep Learning AI</div><div class="tech-desc">Neural networks trained on millions of data points</div></div></div>
+    <div class="tech-card fade-in"><div class="tech-icon" style="background:rgba(16,185,129,0.1);">☁️</div><div><div class="tech-name">Cloud Infrastructure</div><div class="tech-desc">Enterprise-grade servers with 99.9% availability</div></div></div>
+    <div class="tech-card fade-in"><div class="tech-icon" style="background:rgba(167,139,250,0.1);">🔒</div><div><div class="tech-name">AES-256 Encryption</div><div class="tech-desc">Bank-grade security for all data and transactions</div></div></div>
+    <div class="tech-card fade-in"><div class="tech-icon" style="background:rgba(245,158,11,0.1);">📊</div><div><div class="tech-name">Real-Time Analytics</div><div class="tech-desc">Live performance monitoring and reporting</div></div></div>
+    <div class="tech-card fade-in"><div class="tech-icon" style="background:rgba(239,68,68,0.1);">⚡</div><div><div class="tech-name">Auto-Optimisation</div><div class="tech-desc">AI self-improves based on market conditions</div></div></div>
+    <div class="tech-card fade-in"><div class="tech-icon" style="background:rgba(0,255,204,0.1);">🌐</div><div><div class="tech-name">Multi-Platform</div><div class="tech-desc">Operates across multiple income channels simultaneously</div></div></div>
+  </div>
+</section>
+<div class="glow-line"></div>
+<section>
+  <div style="text-align:center;" class="fade-in">
+    <span class="s-tag">// Leadership</span>
+    <h2>Meet the <span class="c">Team</span></h2>
+  </div>
+  <div class="team-grid">
+    <div class="team-card fade-in"><div class="team-avatar">CEO</div><div class="team-name">Travis Lim</div><div class="team-role">Founder & CEO</div><div class="team-bio">10+ years in fintech and AI. Former lead engineer at regional digital bank. Passionate about democratising wealth creation.</div></div>
+    <div class="team-card fade-in"><div class="team-avatar" style="background:linear-gradient(135deg,#a78bfa,#00d4ff);">CTO</div><div class="team-name">Kevin Wong</div><div class="team-role">Chief Technology Officer</div><div class="team-bio">PhD in Machine Learning. Built AI systems used by Fortune 500 companies. Leads our R&D team of 15 engineers.</div></div>
+    <div class="team-card fade-in"><div class="team-avatar" style="background:linear-gradient(135deg,#10b981,#00d4ff);">COO</div><div class="team-name">Priya Menon</div><div class="team-role">Chief Operations Officer</div><div class="team-bio">Operations veteran with experience scaling tech startups from 0 to 100K users. Ensures flawless client experience.</div></div>
+    <div class="team-card fade-in"><div class="team-avatar" style="background:linear-gradient(135deg,#f59e0b,#ef4444);">CSO</div><div class="team-name">Ahmad Ridzuan</div><div class="team-role">Chief Security Officer</div><div class="team-bio">Cybersecurity expert with 12 years experience. Previously led security at Malaysia's largest digital payments provider.</div></div>
+  </div>
+</section>
+<section style="padding-top:0;">
+  <div class="cta-card fade-in">
+    <span class="s-tag">// Join Us</span>
+    <h2>Ready to Start <span class="c">Earning?</span></h2>
+    <p>Join 2,400+ clients already building passive income with Nexora AI. Start with any plan, upgrade anytime.</p>
+    <div class="cta-btns">
+      <button class="btn-primary" onclick="window.location.href='login.html'">Get Started Free</button>
+      <button class="btn-outline" onclick="window.location.href='contact.html'">Talk to Sales</button>
+    </div>
+  </div>
+</section>
+<footer>
+  <div class="footer-copy">© 2026 Nexora AI. All rights reserved.</div>
+  <div class="footer-links"><a href="#">Terms</a><a href="#">Privacy</a><a href="index.html">Home</a></div>
+</footer>
+<script>
+const canvas=document.getElementById('bgCanvas');const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const pts=[];for(let i=0;i<60;i++)pts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2+0.3,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:Math.random()*.4+.1,c:Math.random()>.5?'0,212,255':'124,92,191'});
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;});requestAnimationFrame(draw);}draw();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

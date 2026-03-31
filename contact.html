@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexora AI — Contact Us</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#030712;--card:rgba(10,14,28,0.95);--cyan:#00d4ff;--cyan2:#00ffcc;--purple:#7c5cbf;--purple2:#a78bfa;--green:#10b981;--border:rgba(0,212,255,0.12);--white:#f0f6ff;--muted:rgba(240,246,255,0.5);--font:'Plus Jakarta Sans',sans-serif;--font-h:'Orbitron',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font);overflow-x:hidden;}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:70px 70px;mask-image:radial-gradient(ellipse 80% 80% at center,black,transparent);}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:rgba(0,212,255,0.05);top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:rgba(124,92,191,0.06);bottom:-100px;left:-100px;}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.2rem 5rem;background:rgba(3,7,18,0.88);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo-icon{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:0.7rem;font-weight:700;color:#fff;}
+.nav-logo-text{font-family:var(--font-h);font-size:1rem;font-weight:700;color:var(--cyan);letter-spacing:0.1em;}
+.nav-logo-text span{color:var(--white);}
+.nav-links{display:flex;gap:2rem;list-style:none;}
+.nav-links a{font-size:0.7rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);text-decoration:none;transition:color 0.3s;font-family:var(--font-h);}
+.nav-links a:hover,.nav-links a.active{color:var(--cyan);}
+.nav-btn{padding:0.6rem 1.4rem;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;color:#fff;font-family:var(--font-h);font-size:0.58rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;border-radius:8px;}
+.hero{position:relative;z-index:1;padding:140px 5rem 60px;text-align:center;}
+.hero-tag{display:inline-flex;align-items:center;gap:8px;font-size:0.62rem;letter-spacing:0.25em;text-transform:uppercase;color:var(--cyan2);padding:0.4rem 1.2rem;border:1px solid rgba(0,255,204,0.25);background:rgba(0,255,204,0.05);border-radius:30px;margin-bottom:1.5rem;font-family:var(--font-h);}
+.hero-tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan2);animation:blink 1.5s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.2;}}
+h1{font-family:var(--font-h);font-size:clamp(1.8rem,4vw,3rem);font-weight:900;line-height:1.1;letter-spacing:0.04em;margin-bottom:1rem;}
+h1 .c{color:var(--cyan);text-shadow:0 0 30px rgba(0,212,255,0.4);}
+.hero-sub{font-size:0.9rem;color:var(--muted);max-width:500px;margin:0 auto;}
+.main{position:relative;z-index:1;padding:2rem 5rem 6rem;max-width:1200px;margin:0 auto;}
+.contact-grid{display:grid;grid-template-columns:1fr 1.5fr;gap:2.5rem;align-items:start;}
+.contact-cards{display:flex;flex-direction:column;gap:16px;}
+.contact-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;display:flex;align-items:flex-start;gap:16px;transition:all 0.3s;cursor:pointer;text-decoration:none;}
+.contact-card:hover{border-color:rgba(0,212,255,0.3);transform:translateY(-3px);box-shadow:0 15px 40px rgba(0,0,0,0.3);}
+.contact-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.contact-info{flex:1;}
+.contact-type{font-size:0.65rem;letter-spacing:0.2em;text-transform:uppercase;color:var(--muted);font-family:var(--font-h);margin-bottom:4px;}
+.contact-value{font-size:0.95rem;font-weight:600;color:var(--white);margin-bottom:4px;}
+.contact-desc{font-size:0.78rem;color:var(--muted);line-height:1.5;}
+.contact-arrow{color:var(--cyan);font-size:1rem;align-self:center;}
+.hours-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;margin-top:0;}
+.hours-title{font-family:var(--font-h);font-size:0.72rem;font-weight:600;color:var(--cyan);letter-spacing:0.15em;text-transform:uppercase;margin-bottom:16px;}
+.hours-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.82rem;}
+.hours-row:last-child{border-bottom:none;}
+.hours-day{color:var(--muted);}
+.hours-time{color:var(--white);font-weight:500;}
+.hours-time.online{color:var(--green);}
+.form-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px;}
+.form-title{font-family:var(--font-h);font-size:0.9rem;font-weight:700;color:var(--white);letter-spacing:0.08em;margin-bottom:6px;}
+.form-sub{font-size:0.82rem;color:var(--muted);margin-bottom:28px;line-height:1.6;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-group{margin-bottom:16px;}
+.form-label{display:block;font-size:0.72rem;font-weight:600;color:rgba(240,246,255,0.65);margin-bottom:7px;letter-spacing:0.05em;}
+.form-input{width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,255,0.12);border-radius:10px;padding:12px 16px;color:var(--white);font-family:var(--font);font-size:0.85rem;outline:none;transition:all 0.2s;}
+.form-input:focus{border-color:rgba(0,212,255,0.4);background:rgba(0,0,0,0.4);box-shadow:0 0 0 3px rgba(0,212,255,0.06);}
+.form-input::placeholder{color:rgba(240,246,255,0.22);}
+select.form-input option{background:#0a0e1c;}
+textarea.form-input{resize:vertical;min-height:130px;line-height:1.6;}
+.btn-submit{width:100%;padding:14px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),#0088cc);border:none;color:#fff;font-family:var(--font-h);font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 0 25px rgba(0,212,255,0.2);}
+.btn-submit:hover{box-shadow:0 0 45px rgba(0,212,255,0.5);transform:translateY(-2px);}
+.success-msg{display:none;text-align:center;padding:30px;}
+.success-msg.show{display:block;}
+.success-icon{font-size:3rem;margin-bottom:12px;}
+.success-title{font-family:var(--font-h);font-size:0.9rem;color:var(--green);margin-bottom:8px;}
+.success-sub{font-size:0.82rem;color:var(--muted);line-height:1.7;}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:2rem 5rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;}
+.footer-copy{font-size:0.7rem;color:var(--muted);}
+.footer-links{display:flex;gap:1.5rem;}
+.footer-links a{font-size:0.7rem;color:var(--muted);text-decoration:none;transition:color 0.3s;}
+.footer-links a:hover{color:var(--cyan);}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+@media(max-width:900px){nav{padding:1rem 1.5rem;}.nav-links{display:none;}.hero,.main{padding-left:1.5rem;padding-right:1.5rem;}.contact-grid{grid-template-columns:1fr;}.form-row{grid-template-columns:1fr;}footer{padding:2rem 1.5rem;}}
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+<nav>
+  <a class="nav-logo" href="index.html"><div class="nav-logo-icon">N</div><div class="nav-logo-text">NEXORA <span>AI</span></div></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="index.html#about">About</a></li>
+    <li><a href="subscribe.html">Plans</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li><a href="contact.html" class="active">Contact</a></li>
+  </ul>
+  <button class="nav-btn" onclick="window.location.href='login.html'">Sign In</button>
+</nav>
+<section class="hero">
+  <div class="hero-tag">Get In Touch</div>
+  <h1>We're Here to <span class="c">Help You</span></h1>
+  <p class="hero-sub">Have questions about our AI robots? Our team is available to assist you. Reach out via any channel below.</p>
+</section>
+<div class="main">
+  <div class="contact-grid">
+    <div>
+      <div class="contact-cards">
+        <a class="contact-card fade-in" href="mailto:support@nexoraai.com">
+          <div class="contact-icon" style="background:rgba(0,212,255,0.1);">📧</div>
+          <div class="contact-info">
+            <div class="contact-type">Email Support</div>
+            <div class="contact-value">support@nexoraai.com</div>
+            <div class="contact-desc">General enquiries & technical support. We respond within 24 hours.</div>
+          </div>
+          <div class="contact-arrow">→</div>
+        </a>
+        <a class="contact-card fade-in" href="https://wa.me/60123456789" target="_blank">
+          <div class="contact-icon" style="background:rgba(16,185,129,0.1);">💬</div>
+          <div class="contact-info">
+            <div class="contact-type">WhatsApp</div>
+            <div class="contact-value">+60 12-345 6789</div>
+            <div class="contact-desc">Quick replies via WhatsApp. Best for urgent inquiries.</div>
+          </div>
+          <div class="contact-arrow">→</div>
+        </a>
+        <a class="contact-card fade-in" href="mailto:business@nexoraai.com">
+          <div class="contact-icon" style="background:rgba(245,158,11,0.1);">🏢</div>
+          <div class="contact-info">
+            <div class="contact-type">Enterprise Sales</div>
+            <div class="contact-value">business@nexoraai.com</div>
+            <div class="contact-desc">Custom plans & bulk licensing for businesses.</div>
+          </div>
+          <div class="contact-arrow">→</div>
+        </a>
+      </div>
+      <div class="hours-card fade-in" style="margin-top:16px;">
+        <div class="hours-title">Support Hours</div>
+        <div class="hours-row"><span class="hours-day">Monday – Friday</span><span class="hours-time online">● 9:00 AM – 9:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Saturday</span><span class="hours-time online">● 10:00 AM – 6:00 PM</span></div>
+        <div class="hours-row"><span class="hours-day">Sunday</span><span class="hours-time">Email only</span></div>
+        <div class="hours-row"><span class="hours-day">AI Bot (24/7)</span><span class="hours-time online">● Always online</span></div>
+      </div>
+    </div>
+    <div class="form-card fade-in">
+      <div id="formContent">
+        <div class="form-title">Send Us a Message</div>
+        <div class="form-sub">Fill in the form and our team will get back to you within 24 hours.</div>
+        <div class="form-row">
+          <div class="form-group"><label class="form-label">First Name</label><input class="form-input" type="text" placeholder="John" id="fname"/></div>
+          <div class="form-group"><label class="form-label">Last Name</label><input class="form-input" type="text" placeholder="Doe" id="lname"/></div>
+        </div>
+        <div class="form-group"><label class="form-label">Email Address</label><input class="form-input" type="email" placeholder="john@email.com" id="email"/></div>
+        <div class="form-group"><label class="form-label">Subject</label>
+          <select class="form-input" id="subject">
+            <option value="">Select a topic...</option>
+            <option>General Enquiry</option>
+            <option>Technical Support</option>
+            <option>Billing & Payment</option>
+            <option>Enterprise / Custom Plan</option>
+            <option>Partnership</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Message</label><textarea class="form-input" placeholder="Tell us how we can help you..." id="message"></textarea></div>
+        <button class="btn-submit" onclick="submitForm()">Send Message →</button>
+      </div>
+      <div class="success-msg" id="successMsg">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Message Sent!</div>
+        <div class="success-sub">Thank you for reaching out.<br>Our team will get back to you within 24 hours.<br><br><a href="index.html" style="color:var(--cyan);text-decoration:none;">← Back to Home</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+<footer>
+  <div class="footer-copy">© 2026 Nexora AI. All rights reserved.</div>
+  <div class="footer-links"><a href="#">Terms</a><a href="#">Privacy</a><a href="index.html">Home</a></div>
+</footer>
+<script>
+const canvas=document.getElementById('bgCanvas');const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const pts=[];for(let i=0;i<60;i++)pts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2+0.3,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:Math.random()*.4+.1,c:Math.random()>.5?'0,212,255':'124,92,191'});
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;});requestAnimationFrame(draw);}draw();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+function submitForm(){
+  const fname=document.getElementById('fname').value;
+  const email=document.getElementById('email').value;
+  const subject=document.getElementById('subject').value;
+  const message=document.getElementById('message').value;
+  if(!fname||!email||!subject||!message){alert('Please fill in all required fields.');return;}
+  document.getElementById('formContent').style.display='none';
+  document.getElementById('successMsg').classList.add('show');
+}
+const obs=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');}),{threshold:0.1});
+document.querySelectorAll('.fade-in').forEach(el=>obs.observe(el));
+</script>
+</body>
+</html>

@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexora AI — Payment</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#030712;--card:rgba(10,14,28,0.97);--cyan:#00d4ff;--cyan2:#00ffcc;--purple:#7c5cbf;--purple2:#a78bfa;--green:#10b981;--gold:#f59e0b;--red:#ef4444;--orange:#f97316;--border:rgba(0,212,255,0.12);--white:#f0f6ff;--muted:rgba(240,246,255,0.48);--font:'Plus Jakarta Sans',sans-serif;--font-h:'Orbitron',sans-serif;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--white);font-family:var(--font);overflow-x:hidden;min-height:100vh;}
+#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:70px 70px;mask-image:radial-gradient(ellipse 80% 80% at center,black,transparent);}
+.orb{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;}
+.orb1{width:500px;height:500px;background:rgba(0,212,255,0.05);top:-100px;right:-100px;}
+.orb2{width:400px;height:400px;background:rgba(124,92,191,0.06);bottom:-100px;left:-100px;}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 5rem;background:rgba(3,7,18,0.95);backdrop-filter:blur(24px);border-bottom:1px solid var(--border);}
+.nav-logo{display:flex;align-items:center;gap:12px;text-decoration:none;}
+.nav-logo-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--cyan),var(--purple));display:flex;align-items:center;justify-content:center;font-family:var(--font-h);font-size:0.65rem;font-weight:700;color:#fff;}
+.nav-logo-text{font-family:var(--font-h);font-size:0.9rem;font-weight:700;color:var(--cyan);letter-spacing:0.1em;}
+.nav-logo-text span{color:var(--white);}
+.nav-secure{display:flex;align-items:center;gap:6px;font-size:0.72rem;color:var(--green);}
+
+.main{position:relative;z-index:1;padding:100px 5rem 5rem;max-width:1200px;margin:0 auto;}
+
+/* Steps */
+.steps-bar{display:flex;align-items:center;justify-content:center;gap:0;margin-bottom:3rem;}
+.step{display:flex;align-items:center;gap:10px;padding:10px 20px;font-size:0.7rem;font-family:var(--font-h);font-weight:600;letter-spacing:0.08em;color:var(--muted);}
+.step.active{color:var(--cyan);}
+.step.done{color:var(--green);}
+.step-dot{width:28px;height:28px;border-radius:50%;border:1px solid currentColor;display:flex;align-items:center;justify-content:center;font-size:0.65rem;flex-shrink:0;}
+.step-line{width:60px;height:1px;background:var(--border);}
+
+.payment-grid{display:grid;grid-template-columns:1.5fr 1fr;gap:2.5rem;align-items:start;}
+.left-col{display:flex;flex-direction:column;gap:20px;}
+
+/* Plan Select */
+.box-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;}
+.box-title{font-family:var(--font-h);font-size:0.75rem;font-weight:700;color:var(--white);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
+.box-title-icon{font-size:1rem;}
+
+.plan-opts{display:flex;flex-direction:column;gap:10px;}
+.plan-opt{display:flex;align-items:center;gap:14px;padding:16px;border:1px solid var(--border);border-radius:12px;cursor:pointer;transition:all 0.2s;}
+.plan-opt:hover,.plan-opt.sel{border-color:rgba(0,212,255,0.35);background:rgba(0,212,255,0.04);}
+.radio{width:18px;height:18px;border-radius:50%;border:2px solid var(--muted);flex-shrink:0;transition:all 0.2s;position:relative;}
+.plan-opt.sel .radio{border-color:var(--cyan);background:var(--cyan);}
+.plan-opt.sel .radio::after{content:'';position:absolute;width:6px;height:6px;border-radius:50%;background:#fff;top:50%;left:50%;transform:translate(-50%,-50%);}
+.plan-name{font-family:var(--font-h);font-size:0.68rem;font-weight:600;letter-spacing:0.08em;}
+.plan-opt.s .plan-name{color:var(--cyan);}
+.plan-opt.p .plan-name{color:var(--purple2);}
+.plan-opt.e .plan-name{color:var(--gold);}
+.plan-desc{font-size:0.74rem;color:var(--muted);margin-top:3px;}
+.plan-price{font-family:var(--font-h);font-size:0.85rem;font-weight:700;color:var(--white);}
+
+/* Crypto selector */
+.crypto-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.crypto-opt{padding:16px 10px;border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all 0.25s;text-align:center;position:relative;}
+.crypto-opt:hover,.crypto-opt.sel{transform:translateY(-2px);}
+.crypto-opt.sel{box-shadow:0 0 0 2px currentColor;}
+.crypto-opt.btc{--cc:#f7931a;}
+.crypto-opt.eth{--cc:#627eea;}
+.crypto-opt.usdc{--cc:#2775ca;}
+.crypto-opt.usdt{--cc:#26a17b;}
+.crypto-opt.sel{border-color:var(--cc);background:rgba(0,0,0,0.2);}
+.crypto-logo{font-size:1.8rem;margin-bottom:8px;}
+.crypto-name{font-family:var(--font-h);font-size:0.6rem;font-weight:700;letter-spacing:0.1em;color:var(--white);}
+.crypto-full{font-size:0.62rem;color:var(--muted);margin-top:2px;}
+.crypto-tag{font-size:0.55rem;padding:2px 6px;border-radius:8px;margin-top:5px;display:inline-block;font-weight:600;}
+.btc .crypto-tag{background:rgba(247,147,26,0.15);color:#f7931a;}
+.eth .crypto-tag{background:rgba(98,126,234,0.15);color:#627eea;}
+.usdc .crypto-tag{background:rgba(39,117,202,0.15);color:#2775ca;}
+.usdt .crypto-tag{background:rgba(38,161,123,0.15);color:#26a17b;}
+
+/* Wallet address display */
+.wallet-box{background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,255,0.2);border-radius:14px;padding:20px;margin-top:16px;}
+.wallet-label{font-size:0.68rem;letter-spacing:0.15em;text-transform:uppercase;color:var(--muted);font-family:var(--font-h);margin-bottom:10px;}
+.wallet-addr-wrap{display:flex;align-items:center;gap:10px;background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:10px;padding:12px 14px;}
+.wallet-addr{font-family:'Courier New',monospace;font-size:0.78rem;color:var(--cyan2);flex:1;word-break:break-all;letter-spacing:0.05em;}
+.copy-btn{padding:6px 14px;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:var(--cyan);font-size:0.65rem;font-family:var(--font-h);border-radius:7px;cursor:pointer;transition:all 0.2s;flex-shrink:0;letter-spacing:0.08em;}
+.copy-btn:hover{background:rgba(0,212,255,0.2);}
+.copy-btn.copied{background:rgba(16,185,129,0.15);border-color:rgba(16,185,129,0.3);color:var(--green);}
+
+/* QR placeholder */
+.qr-section{display:flex;gap:16px;align-items:center;margin-top:14px;}
+.qr-box{width:90px;height:90px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.65rem;color:var(--muted);text-align:center;padding:8px;}
+.qr-info{flex:1;}
+.qr-title{font-size:0.78rem;font-weight:600;color:var(--white);margin-bottom:5px;}
+.qr-sub{font-size:0.72rem;color:var(--muted);line-height:1.6;}
+
+/* Upload receipt */
+.upload-box{border:1.5px dashed rgba(0,212,255,0.25);border-radius:12px;padding:22px;text-align:center;cursor:pointer;transition:all 0.2s;margin-top:14px;}
+.upload-box:hover{border-color:rgba(0,212,255,0.5);background:rgba(0,212,255,0.03);}
+.upload-icon{font-size:1.8rem;margin-bottom:8px;}
+.upload-text{font-size:0.78rem;color:var(--muted);}
+.upload-text strong{color:var(--cyan);display:block;margin-bottom:3px;font-size:0.82rem;}
+.upload-input{display:none;}
+
+/* Confirm notes */
+.confirm-row{display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem;color:var(--muted);}
+.confirm-row:last-child{border-bottom:none;}
+.confirm-row strong{color:var(--white);}
+
+/* How to buy tutorial */
+.tutorial-tabs{display:flex;gap:6px;background:rgba(0,0,0,0.3);border-radius:10px;padding:4px;margin-bottom:16px;}
+.tut-tab{flex:1;padding:8px;border-radius:8px;font-size:0.68rem;font-family:var(--font-h);letter-spacing:0.06em;cursor:pointer;transition:all 0.2s;color:var(--muted);background:transparent;border:none;text-align:center;}
+.tut-tab.active{background:var(--card);color:var(--white);box-shadow:0 1px 4px rgba(0,0,0,0.4);}
+.tut-content{display:none;}
+.tut-content.active{display:block;}
+.tut-step{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.tut-step:last-child{border-bottom:none;}
+.tut-num{width:28px;height:28px;border-radius:50%;background:rgba(0,212,255,0.1);border:1px solid rgba(0,212,255,0.3);color:var(--cyan);font-family:var(--font-h);font-size:0.65rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+.tut-body{flex:1;}
+.tut-title{font-size:0.82rem;font-weight:600;color:var(--white);margin-bottom:4px;}
+.tut-desc{font-size:0.76rem;color:var(--muted);line-height:1.65;}
+.tut-desc a{color:var(--cyan);text-decoration:none;}
+.tut-desc a:hover{opacity:0.8;}
+.exchange-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.chip{padding:4px 12px;background:rgba(0,212,255,0.07);border:1px solid rgba(0,212,255,0.2);border-radius:20px;font-size:0.68rem;color:var(--cyan);font-weight:500;}
+.warn-box{background:rgba(245,158,11,0.06);border:1px solid rgba(245,158,11,0.25);border-radius:10px;padding:12px 14px;font-size:0.75rem;color:rgba(245,158,11,0.9);line-height:1.6;margin-top:12px;}
+.warn-box::before{content:'⚠️  ';}
+
+/* Summary card */
+.summary-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:28px;position:sticky;top:100px;}
+.sum-title{font-family:var(--font-h);font-size:0.7rem;font-weight:700;color:var(--white);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:18px;}
+.sum-plan-box{background:rgba(0,212,255,0.05);border:1px solid rgba(0,212,255,0.15);border-radius:12px;padding:16px;margin-bottom:18px;}
+.sum-plan-name{font-family:var(--font-h);font-size:0.72rem;font-weight:700;color:var(--cyan);margin-bottom:4px;}
+.sum-plan-desc{font-size:0.73rem;color:var(--muted);line-height:1.5;}
+.sum-crypto-box{background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.sum-crypto-logo{font-size:1.5rem;}
+.sum-crypto-name{font-family:var(--font-h);font-size:0.68rem;color:var(--white);font-weight:600;}
+.sum-crypto-amount{font-family:var(--font-h);font-size:0.72rem;color:var(--cyan2);margin-top:2px;}
+.sum-line{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.8rem;}
+.sum-line:last-of-type{border-bottom:none;}
+.sum-line .l{color:var(--muted);}
+.sum-line .v{color:var(--white);font-weight:500;}
+.sum-total{display:flex;justify-content:space-between;padding:14px 0 0;margin-top:6px;border-top:1px solid rgba(255,255,255,0.1);}
+.sum-total-label{font-family:var(--font-h);font-size:0.7rem;font-weight:700;color:var(--white);}
+.sum-total-amt{font-family:var(--font-h);font-size:1.3rem;font-weight:900;color:var(--cyan);}
+.btn-pay{width:100%;padding:15px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),#0066ff);border:none;color:#fff;font-family:var(--font-h);font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;box-shadow:0 0 25px rgba(0,212,255,0.2);margin-top:18px;}
+.btn-pay:hover{box-shadow:0 0 45px rgba(0,212,255,0.5);transform:translateY(-2px);}
+.sec-notes{margin-top:14px;}
+.sec-note{display:flex;align-items:center;gap:8px;font-size:0.68rem;color:var(--muted);padding:4px 0;}
+.sec-icon{font-size:0.8rem;}
+
+/* Success */
+.success-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.88);backdrop-filter:blur(16px);z-index:500;display:none;align-items:center;justify-content:center;}
+.success-overlay.show{display:flex;}
+.success-card{background:var(--card);border:1px solid rgba(16,185,129,0.3);border-radius:28px;padding:52px 44px;text-align:center;max-width:480px;animation:popIn 0.5s cubic-bezier(0.175,0.885,0.32,1.275);}
+@keyframes popIn{from{opacity:0;transform:scale(0.85);}to{opacity:1;transform:scale(1);}}
+.s-icon{font-size:4rem;margin-bottom:16px;}
+.s-title{font-family:var(--font-h);font-size:1rem;color:var(--green);margin-bottom:8px;}
+.s-sub{font-size:0.82rem;color:var(--muted);line-height:1.8;margin-bottom:2rem;}
+.btn-dash{padding:13px 32px;border-radius:12px;background:linear-gradient(135deg,var(--cyan),#0066ff);border:none;color:#fff;font-family:var(--font-h);font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;transition:all 0.3s;}
+.btn-dash:hover{box-shadow:0 0 30px rgba(0,212,255,0.4);}
+
+@media(max-width:960px){nav{padding:1rem 1.5rem;}.main{padding:90px 1.5rem 4rem;}.payment-grid{grid-template-columns:1fr;}.summary-card{position:static;}.crypto-grid{grid-template-columns:repeat(2,1fr);}}
+@keyframes spin{to{transform:rotate(360deg);}}
+</style>
+</head>
+<body>
+<canvas id="bgCanvas"></canvas>
+<div class="grid-bg"></div>
+<div class="orb orb1"></div>
+<div class="orb orb2"></div>
+
+<nav>
+  <a class="nav-logo" href="index.html"><div class="nav-logo-icon">N</div><div class="nav-logo-text">NEXORA <span>AI</span></div></a>
+  <div class="nav-secure">🔒 Encrypted Crypto Payment</div>
+</nav>
+
+<div class="main">
+  <div class="steps-bar">
+    <div class="step done"><div class="step-dot">✓</div>Select Plan</div>
+    <div class="step-line"></div>
+    <div class="step active"><div class="step-dot">2</div>Payment</div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-dot">3</div>Confirm</div>
+  </div>
+
+  <div class="payment-grid">
+    <div class="left-col">
+
+      <!-- PLAN SELECT -->
+      <div class="box-card">
+        <div class="box-title"><span class="box-title-icon">💎</span>Select Your Plan</div>
+        <div class="plan-opts">
+          <div class="plan-opt s" onclick="selectPlan(this,'Starter',299)">
+            <div class="radio"></div>
+            <div style="flex:1"><div class="plan-name">STARTER</div><div class="plan-desc">1 AI Robot · Basic Strategy · Email Support</div></div>
+            <div class="plan-price">RM 299/mo</div>
+          </div>
+          <div class="plan-opt p sel" onclick="selectPlan(this,'Professional',799)">
+            <div class="radio"></div>
+            <div style="flex:1"><div class="plan-name">PROFESSIONAL ⭐</div><div class="plan-desc">3 AI Robots · Advanced Strategy · Live Chat</div></div>
+            <div class="plan-price">RM 799/mo</div>
+          </div>
+          <div class="plan-opt e" onclick="selectPlan(this,'Enterprise',0)">
+            <div class="radio"></div>
+            <div style="flex:1"><div class="plan-name">ENTERPRISE</div><div class="plan-desc">Unlimited Robots · Custom Strategy · Dedicated Manager</div></div>
+            <div class="plan-price">Custom</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- CRYPTO SELECT -->
+      <div class="box-card">
+        <div class="box-title"><span class="box-title-icon">₿</span>Select Cryptocurrency</div>
+        <div class="crypto-grid">
+          <div class="crypto-opt btc" onclick="selectCrypto(this,'BTC','Bitcoin','₿','1A2b3C4d5E6f7G8h9I0jKLMNOPQRSTUVWXYZ')">
+            <div class="crypto-logo">₿</div>
+            <div class="crypto-name">BTC</div>
+            <div class="crypto-full">Bitcoin</div>
+            <div class="crypto-tag">BTC</div>
+          </div>
+          <div class="crypto-opt eth sel" onclick="selectCrypto(this,'ETH','Ethereum','Ξ','0x1a2B3c4D5e6F7a8B9c0D1e2F3a4B5c6D7e8F9a0B')">
+            <div class="crypto-logo">Ξ</div>
+            <div class="crypto-name">ETH</div>
+            <div class="crypto-full">Ethereum</div>
+            <div class="crypto-tag">ERC-20</div>
+          </div>
+          <div class="crypto-opt usdc" onclick="selectCrypto(this,'USDC','USD Coin','◎','0x2b3C4d5E6f7A8b9C0d1E2f3A4b5C6d7E8f9A0b1')">
+            <div class="crypto-logo">◎</div>
+            <div class="crypto-name">USDC</div>
+            <div class="crypto-full">USD Coin</div>
+            <div class="crypto-tag">ERC-20</div>
+          </div>
+          <div class="crypto-opt usdt" onclick="selectCrypto(this,'USDT','Tether','₮','0x3c4D5e6F7a8B9c0D1e2F3a4B5c6D7e8F9a0B1c2')">
+            <div class="crypto-logo">₮</div>
+            <div class="crypto-name">USDT</div>
+            <div class="crypto-full">Tether</div>
+            <div class="crypto-tag">TRC-20</div>
+          </div>
+        </div>
+
+        <!-- Wallet Address -->
+        <div class="wallet-box">
+          <div class="wallet-label">Send to this wallet address</div>
+          <div class="wallet-addr-wrap">
+            <div class="wallet-addr" id="walletAddr">0x1a2B3c4D5e6F7a8B9c0D1e2F3a4B5c6D7e8F9a0B</div>
+            <button class="copy-btn" id="copyBtn" onclick="copyAddr()">Copy</button>
+          </div>
+          <div class="qr-section">
+            <div class="qr-box">QR Code<br/>(scan to pay)</div>
+            <div class="qr-info">
+              <div class="qr-title" id="qr-title">ETH Wallet</div>
+              <div class="qr-sub">Scan the QR code with your wallet app, or copy the address above. Make sure to send the <strong style="color:var(--white);">exact amount</strong> in <span id="qr-coin" style="color:var(--cyan);">ETH</span>.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="warn-box">Always double-check the wallet address before sending. Crypto transactions are irreversible. Send only <span id="warn-coin" style="color:var(--gold);font-weight:700;">ETH</span> to this address — sending other tokens may result in permanent loss.</div>
+      </div>
+
+      <!-- UPLOAD RECEIPT -->
+      <div class="box-card">
+        <div class="box-title"><span class="box-title-icon">📤</span>Upload Transaction Proof</div>
+        <div class="confirm-row"><strong>Transaction Hash (TxHash)</strong></div>
+        <div style="margin-bottom:14px;">
+          <input class="form-input" style="width:100%;background:rgba(0,0,0,0.3);border:1px solid rgba(0,212,255,0.12);border-radius:10px;padding:11px 14px;color:var(--white);font-family:monospace;font-size:0.78rem;outline:none;letter-spacing:0.04em;" placeholder="0x transaction hash or TxID..." id="txHash"/>
+        </div>
+        <label class="upload-box" for="receiptUpload">
+          <div class="upload-icon">📸</div>
+          <div class="upload-text"><strong>Upload Screenshot / Receipt</strong>Drag & drop or click to browse<br/><span style="font-size:0.68rem;">PNG, JPG, PDF · Max 10MB</span></div>
+          <input type="file" class="upload-input" id="receiptUpload" accept="image/*,.pdf" onchange="fileSelected(this)"/>
+        </label>
+        <div id="filePreview" style="display:none;margin-top:10px;padding:12px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:10px;font-size:0.78rem;color:var(--green);"></div>
+        <div style="margin-top:14px;">
+          <div class="confirm-row"><div>✅</div><div><strong>After sending:</strong> Paste your transaction hash above and upload a screenshot. Our team will verify within 1–3 hours and activate your AI bot.</div></div>
+          <div class="confirm-row"><div>📧</div><div>You will receive a confirmation email once your payment is verified.</div></div>
+        </div>
+      </div>
+
+      <!-- HOW TO BUY TUTORIAL -->
+      <div class="box-card">
+        <div class="box-title"><span class="box-title-icon">📚</span>How to Buy Crypto — Step by Step Guide</div>
+        <div class="tutorial-tabs">
+          <button class="tut-tab active" onclick="switchTut('binance',this)">Binance</button>
+          <button class="tut-tab" onclick="switchTut('bybit',this)">Bybit</button>
+          <button class="tut-tab" onclick="switchTut('mexc',this)">MEXC</button>
+          <button class="tut-tab" onclick="switchTut('localwallet',this)">Local Wallet</button>
+        </div>
+
+        <!-- BINANCE -->
+        <div class="tut-content active" id="tut-binance">
+          <div class="tut-step">
+            <div class="tut-num">1</div>
+            <div class="tut-body">
+              <div class="tut-title">Create a Binance Account</div>
+              <div class="tut-desc">Go to <a href="https://www.binance.com" target="_blank">binance.com</a> and sign up with your email. Complete identity verification (KYC) by uploading your MyKad or Passport — this takes 5–10 minutes.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">2</div>
+            <div class="tut-body">
+              <div class="tut-title">Deposit Malaysian Ringgit (MYR)</div>
+              <div class="tut-desc">Go to <strong style="color:var(--white);">Buy Crypto → P2P Trading</strong>. Select MYR as your fiat currency. Choose a verified seller and transfer via DuitNow/online banking. You'll receive USDT in your Binance wallet.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">3</div>
+            <div class="tut-body">
+              <div class="tut-title">Buy Your Preferred Crypto</div>
+              <div class="tut-desc">In Binance Spot market, you can swap your USDT to <strong style="color:var(--white);">BTC, ETH, or USDC</strong> instantly at market rate. Go to <strong style="color:var(--white);">Trade → Spot → search your coin</strong>.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">4</div>
+            <div class="tut-body">
+              <div class="tut-title">Withdraw to Nexora AI Wallet</div>
+              <div class="tut-desc">Go to <strong style="color:var(--white);">Wallet → Withdraw</strong>. Select your coin, paste the Nexora AI wallet address, enter the exact amount, select the correct network (ERC-20 for ETH/USDC, TRC-20 for USDT, BTC for Bitcoin), and confirm.</div>
+            </div>
+          </div>
+          <div class="warn-box">Always select the correct network when withdrawing! ERC-20 for ETH/USDC, TRC-20 for USDT, BTC network for Bitcoin. Wrong network = lost funds.</div>
+        </div>
+
+        <!-- BYBIT -->
+        <div class="tut-content" id="tut-bybit">
+          <div class="tut-step">
+            <div class="tut-num">1</div>
+            <div class="tut-body">
+              <div class="tut-title">Register on Bybit</div>
+              <div class="tut-desc">Visit <a href="https://www.bybit.com" target="_blank">bybit.com</a> and create an account. Complete KYC verification with your MyKad or Passport. Bybit supports Malaysian users fully.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">2</div>
+            <div class="tut-body">
+              <div class="tut-title">Buy Crypto via P2P</div>
+              <div class="tut-desc">Tap <strong style="color:var(--white);">Buy Crypto → P2P</strong>. Choose USDT and filter by MYR. Select a seller with 90%+ completion rate. Pay via DuitNow, Maybank, or online banking. Crypto arrives in minutes.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">3</div>
+            <div class="tut-body">
+              <div class="tut-title">Convert to Your Preferred Coin</div>
+              <div class="tut-desc">Use Bybit's <strong style="color:var(--white);">Convert</strong> feature to swap USDT to BTC, ETH, or USDC instantly with no fees. No trading experience needed.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">4</div>
+            <div class="tut-body">
+              <div class="tut-title">Send to Nexora AI</div>
+              <div class="tut-desc">Go to <strong style="color:var(--white);">Assets → Withdraw</strong>. Paste the Nexora AI wallet address, select your coin and the correct network, enter the amount, and submit. Copy the TxID after sending.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MEXC -->
+        <div class="tut-content" id="tut-mexc">
+          <div class="tut-step">
+            <div class="tut-num">1</div>
+            <div class="tut-body">
+              <div class="tut-title">Create MEXC Account</div>
+              <div class="tut-desc">Go to <a href="https://www.mexc.com" target="_blank">mexc.com</a> and register. Complete basic KYC (email + phone). MEXC has fast P2P support for Malaysian Ringgit.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">2</div>
+            <div class="tut-body">
+              <div class="tut-title">Fund with MYR via P2P</div>
+              <div class="tut-desc">Navigate to <strong style="color:var(--white);">OTC / P2P</strong>. Buy USDT with MYR. MEXC has many local Malaysian sellers — choose ones with DuitNow or Maybank transfer option.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">3</div>
+            <div class="tut-body">
+              <div class="tut-title">Trade or Convert</div>
+              <div class="tut-desc">Use the MEXC Spot market to buy BTC, ETH, USDC, or USDT. Search the trading pair like BTC/USDT and execute a market order for instant purchase.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">4</div>
+            <div class="tut-body">
+              <div class="tut-title">Withdraw to Nexora AI</div>
+              <div class="tut-desc">Go to <strong style="color:var(--white);">Wallets → Withdraw</strong>. Enter the Nexora AI address, choose the correct network, input amount, and send. Save your TxID for submission above.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LOCAL WALLET -->
+        <div class="tut-content" id="tut-localwallet">
+          <div class="tut-step">
+            <div class="tut-num">1</div>
+            <div class="tut-body">
+              <div class="tut-title">Download a Crypto Wallet App</div>
+              <div class="tut-desc">Install <strong style="color:var(--white);">Trust Wallet</strong> or <strong style="color:var(--white);">MetaMask</strong> on your phone. These are free, secure, non-custodial wallets. Download from official App Store or Google Play only.</div>
+              <div class="exchange-chips"><span class="chip">Trust Wallet</span><span class="chip">MetaMask</span><span class="chip">Exodus</span></div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">2</div>
+            <div class="tut-body">
+              <div class="tut-title">Buy Crypto Inside the App</div>
+              <div class="tut-desc">Trust Wallet has a built-in <strong style="color:var(--white);">"Buy"</strong> feature. Select your coin (BTC, ETH, USDT, USDC), choose amount in MYR, and pay via credit card or local bank. Powered by MoonPay or Transak.</div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">3</div>
+            <div class="tut-body">
+              <div class="tut-title">Alternatively — Use a Local Exchange</div>
+              <div class="tut-desc">Malaysian exchanges like <strong style="color:var(--white);">Luno</strong> or <strong style="color:var(--white);">Tokenize</strong> are registered with SC Malaysia. Buy crypto with MYR via FPX, then withdraw to your Trust Wallet or directly to Nexora AI.</div>
+              <div class="exchange-chips"><span class="chip">Luno MY</span><span class="chip">Tokenize</span><span class="chip">Sinegy</span></div>
+            </div>
+          </div>
+          <div class="tut-step">
+            <div class="tut-num">4</div>
+            <div class="tut-body">
+              <div class="tut-title">Send to Nexora AI Wallet</div>
+              <div class="tut-desc">In your wallet app, tap <strong style="color:var(--white);">Send</strong>. Paste the Nexora AI address shown above. Select correct network. Enter exact amount and confirm. Transaction takes 1–30 minutes depending on network.</div>
+            </div>
+          </div>
+          <div class="warn-box">Never share your wallet seed phrase with anyone — including Nexora AI support. We will never ask for your private key or seed phrase.</div>
+        </div>
+      </div>
+
+    </div><!-- end left-col -->
+
+    <!-- SUMMARY -->
+    <div class="summary-card">
+      <div class="sum-title">Order Summary</div>
+      <div class="sum-plan-box">
+        <div class="sum-plan-name" id="sumPlanName">PROFESSIONAL PLAN</div>
+        <div class="sum-plan-desc" id="sumPlanDesc">3 AI Robots · Advanced Strategy · Live Chat · Weekly Reports</div>
+      </div>
+      <div class="sum-crypto-box">
+        <div class="sum-crypto-logo" id="sumCryptoLogo">Ξ</div>
+        <div>
+          <div class="sum-crypto-name" id="sumCryptoName">Ethereum (ETH)</div>
+          <div class="sum-crypto-amount" id="sumCryptoAmt">≈ 0.153 ETH</div>
+        </div>
+      </div>
+      <div class="sum-line"><span class="l">Plan Price</span><span class="v" id="sumPrice">RM 799.00</span></div>
+      <div class="sum-line"><span class="l">SST (6%)</span><span class="v" id="sumTax">RM 47.94</span></div>
+      <div class="sum-line"><span class="l">Network Fee</span><span class="v">~RM 5–15</span></div>
+      <div class="sum-total">
+        <span class="sum-total-label">Total (MYR)</span>
+        <span class="sum-total-amt" id="sumTotal">RM 846.94</span>
+      </div>
+      <button class="btn-pay" onclick="submitPayment()">
+        <span id="payBtnText">Submit Payment →</span>
+      </button>
+      <div class="sec-notes">
+        <div class="sec-note"><span class="sec-icon">🔒</span>End-to-end encrypted</div>
+        <div class="sec-note"><span class="sec-icon">⚡</span>Bot activated within 1–3 hours</div>
+        <div class="sec-note"><span class="sec-icon">✅</span>14-day guarantee (Pro plan)</div>
+        <div class="sec-note"><span class="sec-icon">📧</span>Email confirmation sent</div>
+        <div class="sec-note"><span class="sec-icon">🚫</span>Cancel anytime</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Success Overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="s-icon">🎉</div>
+    <div class="s-title">Payment Submitted!</div>
+    <div class="s-sub">
+      Thank you! Your crypto payment is being verified.<br><br>
+      Our team will confirm your transaction within <strong style="color:var(--white);">1–3 hours</strong> and activate your AI robot.<br><br>
+      A confirmation email will be sent to you shortly.
+    </div>
+    <button class="btn-dash" onclick="window.location.href='index.html'">Back to Home →</button>
+  </div>
+</div>
+
+<script>
+// BG Particles
+const canvas=document.getElementById('bgCanvas');const ctx=canvas.getContext('2d');
+canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+const pts=[];for(let i=0;i<60;i++)pts.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*1.2+0.3,vx:(Math.random()-.5)*.15,vy:(Math.random()-.5)*.15,a:Math.random()*.4+.1,c:Math.random()>.5?'0,212,255':'124,92,191'});
+function draw(){ctx.clearRect(0,0,canvas.width,canvas.height);pts.forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(${p.c},${p.a})`;ctx.fill();p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=canvas.width;if(p.x>canvas.width)p.x=0;if(p.y<0)p.y=canvas.height;if(p.y>canvas.height)p.y=0;});requestAnimationFrame(draw);}draw();
+window.addEventListener('resize',()=>{canvas.width=window.innerWidth;canvas.height=window.innerHeight;});
+
+// State
+let curPlan={name:'Professional',price:799};
+let curCrypto={sym:'ETH',name:'Ethereum',logo:'Ξ',addr:'0x1a2B3c4D5e6F7a8B9c0D1e2F3a4B5c6D7e8F9a0B'};
+
+// Crypto rates (approximate)
+const rates={BTC:0.0000645,ETH:0.000215,USDC:4.71,USDT:4.71};
+
+function selectPlan(el,name,price){
+  document.querySelectorAll('.plan-opt').forEach(p=>p.classList.remove('sel'));
+  el.classList.add('sel');
+  curPlan={name,price};
+  updateSummary();
+}
+
+function selectCrypto(el,sym,name,logo,addr){
+  document.querySelectorAll('.crypto-opt').forEach(c=>c.classList.remove('sel'));
+  el.classList.add('sel');
+  curCrypto={sym,name,logo,addr};
+  document.getElementById('walletAddr').textContent=addr;
+  document.getElementById('qr-title').textContent=sym+' Wallet';
+  document.getElementById('qr-coin').textContent=sym;
+  document.getElementById('warn-coin').textContent=sym;
+  document.getElementById('copyBtn').textContent='Copy';
+  document.getElementById('copyBtn').classList.remove('copied');
+  updateSummary();
+}
+
+function updateSummary(){
+  if(curPlan.name==='Enterprise'){
+    document.getElementById('sumPlanName').textContent='ENTERPRISE PLAN';
+    document.getElementById('sumPlanDesc').textContent='Custom pricing — contact us';
+    document.getElementById('sumPrice').textContent='Custom';
+    document.getElementById('sumTax').textContent='—';
+    document.getElementById('sumTotal').textContent='Custom';
+    document.getElementById('sumCryptoAmt').textContent='Contact for quote';
+    document.getElementById('payBtnText').textContent='Request Quote →';
+    return;
+  }
+  const p=curPlan.price;
+  const tax=p*0.06;
+  const total=p+tax;
+  const cryptoAmt=(total/4.71*rates[curCrypto.sym]*4.71).toFixed(curCrypto.sym==='BTC'?6:curCrypto.sym==='ETH'?4:2);
+  document.getElementById('sumPlanName').textContent=curPlan.name.toUpperCase()+' PLAN';
+  const descs={Professional:'3 AI Robots · Advanced Strategy · Live Chat',Starter:'1 AI Robot · Basic Strategy · Email Support'};
+  document.getElementById('sumPlanDesc').textContent=descs[curPlan.name]||'';
+  document.getElementById('sumPrice').textContent='RM '+p.toFixed(2);
+  document.getElementById('sumTax').textContent='RM '+tax.toFixed(2);
+  document.getElementById('sumTotal').textContent='RM '+total.toFixed(2);
+  document.getElementById('sumCryptoLogo').textContent=curCrypto.logo;
+  document.getElementById('sumCryptoName').textContent=curCrypto.name+' ('+curCrypto.sym+')';
+  const rate=rates[curCrypto.sym];
+  document.getElementById('sumCryptoAmt').textContent='≈ '+(total*rate).toFixed(curCrypto.sym==='BTC'?6:curCrypto.sym==='ETH'?4:2)+' '+curCrypto.sym;
+  document.getElementById('payBtnText').textContent='Submit Payment →';
+}
+
+function copyAddr(){
+  const addr=document.getElementById('walletAddr').textContent;
+  navigator.clipboard.writeText(addr).then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='Copied!';
+    btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Copy';btn.classList.remove('copied');},2500);
+  });
+}
+
+function fileSelected(input){
+  if(input.files[0]){
+    const name=input.files[0].name;
+    document.getElementById('filePreview').style.display='block';
+    document.getElementById('filePreview').textContent='✅ File attached: '+name;
+  }
+}
+
+function switchTut(tab,el){
+  document.querySelectorAll('.tut-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.tut-content').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tut-'+tab).classList.add('active');
+}
+
+function submitPayment(){
+  if(curPlan.name==='Enterprise'){window.location.href='contact.html';return;}
+  const btn=document.querySelector('.btn-pay');
+  btn.style.opacity='0.7';
+  btn.disabled=true;
+  document.getElementById('payBtnText').innerHTML='<span style="display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle;margin-right:8px;"></span>Submitting...';
+  setTimeout(()=>{document.getElementById('successOverlay').classList.add('show');},2000);
+}
+
+// Init
+updateSummary();
+</script>
+</body>
+</html>
