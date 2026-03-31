@@ -36,7 +36,7 @@ body{background:var(--bg);color:var(--white);font-family:var(--font);font-size:1
   border-right:1px solid var(--border);
   display:flex;flex-direction:column;
   position:fixed;top:0;left:0;bottom:0;
-  z-index:100;
+  z-index:150;
   transition:width 0.3s;
 }
 .sidebar-logo{
@@ -432,18 +432,17 @@ body{background:var(--bg);color:var(--white);font-family:var(--font);font-size:1
 <body>
 
 <!-- PASSWORD GATE -->
-<div id="pwGate" style="position:fixed;inset:0;background:#030712;z-index:99999;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">
-  <div style="background:rgba(10,14,28,0.98);border:1px solid rgba(0,212,255,0.2);border-radius:24px;padding:48px 40px;width:380px;text-align:center;box-shadow:0 0 80px rgba(0,212,255,0.1);">
+<!-- PASSWORD GATE -->
+<div id="pwGate" style="position:fixed;inset:0;background:#030712;z-index:9999;display:flex;align-items:center;justify-content:center;font-family:'Plus Jakarta Sans',sans-serif;">
+  <div style="background:rgba(10,14,28,0.98);border:1px solid rgba(0,212,255,0.2);border-radius:24px;padding:48px 40px;width:380px;text-align:center;">
     <div style="font-size:2.5rem;margin-bottom:16px;">🔐</div>
     <div style="font-family:'Orbitron',sans-serif;font-size:0.85rem;font-weight:700;color:#00d4ff;letter-spacing:0.15em;margin-bottom:6px;">NEXORA AI</div>
     <div style="font-family:'Orbitron',sans-serif;font-size:0.7rem;color:rgba(240,246,255,0.5);letter-spacing:0.2em;margin-bottom:28px;">ADMIN ACCESS ONLY</div>
-    <input id="pwInput" type="password"
-      placeholder="Enter admin password"
-      onkeydown="if(event.key==='Enter')checkPw()"
+    <input id="pwInput" type="password" placeholder="Enter admin password"
       style="width:100%;background:rgba(0,0,0,0.4);border:1px solid rgba(0,212,255,0.2);border-radius:10px;padding:13px 16px;color:#f0f6ff;font-family:'Plus Jakarta Sans',sans-serif;font-size:0.88rem;outline:none;margin-bottom:12px;letter-spacing:0.1em;text-align:center;"
-    />
+      onkeydown="if(event.key==='Enter')checkAdminPw()"/>
     <div id="pwError" style="color:#ef4444;font-size:0.72rem;margin-bottom:12px;display:none;">⚠️ Incorrect password. Try again.</div>
-    <button onclick="checkPw()"
+    <button onclick="checkAdminPw()"
       style="width:100%;padding:13px;background:linear-gradient(135deg,#00d4ff,#0066ff);border:none;border-radius:10px;color:#fff;font-family:'Orbitron',sans-serif;font-size:0.62rem;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;cursor:pointer;">
       Access Admin Panel →
     </button>
@@ -451,29 +450,29 @@ body{background:var(--bg);color:var(--white);font-family:var(--font);font-size:1
   </div>
 </div>
 <script>
-// Simple password check — change "NexoraAdmin2026" to your own password
 const ADMIN_PW = "NexoraAdmin2026";
-function checkPw(){
+function checkAdminPw(){
   const input = document.getElementById('pwInput').value;
   if(input === ADMIN_PW){
-    document.getElementById('pwGate').style.display='none';
+    // COMPLETELY REMOVE the gate from DOM - no more blocking!
+    const gate = document.getElementById('pwGate');
+    gate.parentNode.removeChild(gate);
     sessionStorage.setItem('nexora_admin','1');
   } else {
     document.getElementById('pwError').style.display='block';
     document.getElementById('pwInput').value='';
     document.getElementById('pwInput').focus();
-    document.getElementById('pwInput').style.borderColor='rgba(239,68,68,0.5)';
-    setTimeout(()=>{document.getElementById('pwInput').style.borderColor='rgba(0,212,255,0.2)';},2000);
+    setTimeout(()=>document.getElementById('pwError').style.display='none',3000);
   }
 }
-// If already authenticated this session, skip gate
+// If already authenticated - remove gate immediately
 if(sessionStorage.getItem('nexora_admin')==='1'){
-  document.addEventListener('DOMContentLoaded',()=>{
-    document.getElementById('pwGate').style.display='none';
+  document.addEventListener('DOMContentLoaded',function(){
+    const gate = document.getElementById('pwGate');
+    if(gate) gate.parentNode.removeChild(gate);
   });
 }
 </script>
-
 
 <!-- SIDEBAR -->
 <aside class="sidebar">
@@ -976,7 +975,12 @@ function showToast(msg){
 }
 
 // Logout
-function confirmLogout(){ if(confirm('Are you sure you want to log out?')) showToast('Logged out successfully!'); }
+function confirmLogout(){
+  if(confirm('Are you sure you want to log out?')){
+    sessionStorage.removeItem('nexora_admin');
+    window.location.href='index.html';
+  }
+}
 
 // Filter users
 function filterUsers(type, el){
@@ -1019,4 +1023,130 @@ window.addEventListener('load', ()=>{
 
   // Revenue by plan
   const rp = document.getElementById('revenueByPlan');
-  if(rp) new Chart(rp, {
+  if(rp) new Chart(rp, {    type:'bar',
+    data:{labels:['Oct','Nov','Dec','Jan','Feb','Mar'],datasets:[{label:'Starter',data:[18000,22000,26000,28000,31000,34000],backgroundColor:'rgba(0,212,255,0.7)',borderRadius:4},{label:'Pro',data:[26000,30000,36000,42000,46000,48000],backgroundColor:'rgba(167,139,250,0.7)',borderRadius:4},{label:'Enterprise',data:[8000,9000,12000,13000,12000,12200],backgroundColor:'rgba(245,158,11,0.7)',borderRadius:4}]},
+    options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{size:11}}}},scales:{x:{stacked:true,grid:{display:false},ticks:{color:'#64748b'}},y:{stacked:true,grid:{color:'rgba(255,255,255,0.04)'},ticks:{color:'#64748b'}}}}
+  });
+});
+</script>
+
+<!-- ===== FIREBASE ADMIN ===== -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, updateDoc, deleteDoc, onSnapshot, setDoc, getDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyA1XUAALsiKzi4lABKJ6Affkz15H9obdPo",
+  authDomain: "nexora-ai-d871c.firebaseapp.com",
+  projectId: "nexora-ai-d871c",
+  storageBucket: "nexora-ai-d871c.firebasestorage.app",
+  messagingSenderId: "670997703305",
+  appId: "1:670997703305:web:9dae19f161556f5485f458"
+});
+const db = getFirestore(app);
+
+// Real-time users
+onSnapshot(collection(db,'users'), snap => {
+  const els = document.querySelectorAll('.stat-value');
+  if(els[0]) els[0].textContent = snap.size.toLocaleString();
+  let active = 0;
+  snap.forEach(d => { if(d.data().plan && d.data().plan!=='none') active++; });
+  if(els[1]) els[1].textContent = active.toLocaleString();
+  // Fill users table
+  const tbody = document.getElementById('usersTable');
+  if(!tbody || snap.empty) return;
+  const colors=['linear-gradient(135deg,#00d4ff,#0066ff)','linear-gradient(135deg,#a78bfa,#7c5cbf)','linear-gradient(135deg,#10b981,#00d4ff)','linear-gradient(135deg,#f59e0b,#ef4444)'];
+  tbody.innerHTML='';
+  let i=0;
+  snap.forEach(docSnap => {
+    const u=docSnap.data();
+    const init=(u.name||u.email||'?').substring(0,2).toUpperCase();
+    const plan=u.plan||'none';
+    const planBadge=plan!=='none'?`<span class="badge ${plan==='professional'?'pro':plan==='starter'?'starter':'enterprise'}">${plan}</span>`:'<span class="badge inactive">No Plan</span>';
+    const date=u.createdAt?new Date(u.createdAt.seconds*1000).toLocaleDateString('en-MY',{month:'short',year:'numeric'}):'N/A';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><div class="td-user"><div class="td-avatar" style="background:${colors[i%4]};">${init}</div><div><div class="td-name">${u.name||'—'}</div><div class="td-email">${u.email||'—'}</div></div></div></td><td>${planBadge}</td><td><span class="badge ${u.status==='active'?'active':'inactive'}">● ${u.status||'active'}</span></td><td>${date}</td><td>—</td><td><div class="action-btns"><button class="btn-sm edit" onclick="editUser('${docSnap.id}','${plan}')">Edit</button><button class="btn-sm del" onclick="removeUser('${docSnap.id}')">Remove</button></div></td>`;
+    tbody.appendChild(tr); i++;
+  });
+});
+
+// Real-time transactions
+onSnapshot(collection(db,'transactions'), snap => {
+  let total=0; snap.forEach(d=>{total+=parseFloat(d.data().amount)||0;});
+  const els=document.querySelectorAll('.stat-value');
+  if(els[2]) els[2].textContent='RM '+(total/1000).toFixed(1)+'K';
+  let tbody=document.getElementById('realTxnTable');
+  if(!tbody){const sec=document.getElementById('sec-payments');if(!sec)return;const et=sec.querySelector('tbody');if(et){et.id='realTxnTable';tbody=et;}const th=sec.querySelector('thead tr');if(th)th.innerHTML='<th>TxID</th><th>User</th><th>Plan</th><th>Amount</th><th>Date</th><th>Crypto</th><th>Status</th><th>Actions</th>';}
+  if(!tbody)return;
+  if(snap.empty){tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--muted);padding:2rem;">No transactions yet.</td></tr>';return;}
+  tbody.innerHTML='';
+  snap.forEach(docSnap=>{
+    const t=docSnap.data();
+    const date=t.createdAt?new Date(t.createdAt.seconds*1000).toLocaleDateString('en-MY'):'N/A';
+    const badge=t.status==='approved'?'<span class="badge active">Paid</span>':t.status==='rejected'?'<span class="badge inactive">Rejected</span>':'<span class="badge pending">Pending</span>';
+    const actions=t.status==='pending'?`<button class="btn-sm edit" onclick="approveTxn('${docSnap.id}','${t.userId||''}','${t.plan||''}')">Approve</button><button class="btn-sm del" onclick="rejectTxn('${docSnap.id}')">Reject</button>`:`<button class="btn-sm view">View</button>`;
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td style="color:var(--cyan);font-family:monospace;">#${docSnap.id.substring(0,8).toUpperCase()}</td><td>${t.userName||t.userEmail||'—'}</td><td><span class="badge starter">${t.plan||'—'}</span></td><td class="txn-amount credit">RM ${t.amount||'—'}</td><td>${date}</td><td>${t.crypto||'—'}</td><td>${badge}</td><td><div class="action-btns">${actions}</div></td>`;
+    tbody.appendChild(tr);
+  });
+});
+
+// Load site content
+async function loadContent(){
+  try{
+    const snap=await getDoc(doc(db,'siteContent','main'));
+    if(!snap.exists())return;
+    Object.keys(snap.data()).forEach(k=>{const el=document.getElementById('content-'+k);if(el)el.value=snap.data()[k];});
+  }catch(e){console.error(e);}
+}
+loadContent();
+
+// Save content
+window.saveContent=async function(){
+  const fields=['heroHeadline','heroSubtext','aboutText','contactEmail','whatsapp','footerTnc','stat1','stat2','stat3'];
+  const data={updatedAt:serverTimestamp()};
+  fields.forEach(f=>{const el=document.getElementById('content-'+f);if(el)data[f]=el.value;});
+  try{
+    await setDoc(doc(db,'siteContent','main'),data,{merge:true});
+    const msg=document.getElementById('contentSaveMsg');
+    if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',3000);}
+    showToast('✅ Content saved!');
+  }catch(e){showToast('❌ Error: '+e.message);}
+};
+
+// Edit user plan
+window.editUser=async function(uid,currentPlan){
+  const newPlan=prompt('Change plan (none/starter/professional/enterprise):\nCurrent: '+currentPlan);
+  if(!newPlan)return;
+  try{await updateDoc(doc(db,'users',uid),{plan:newPlan.toLowerCase().trim()});showToast('✅ Plan updated!');}
+  catch(e){showToast('❌ '+e.message);}
+};
+
+// Remove user
+window.removeUser=async function(uid){
+  if(!confirm('Remove this user?'))return;
+  try{await deleteDoc(doc(db,'users',uid));showToast('✅ User removed.');}
+  catch(e){showToast('❌ '+e.message);}
+};
+
+// Approve transaction
+window.approveTxn=async function(id,userId,plan){
+  if(!confirm('Approve payment and activate plan?'))return;
+  try{
+    await updateDoc(doc(db,'transactions',id),{status:'approved',approvedAt:serverTimestamp()});
+    if(userId)await updateDoc(doc(db,'users',userId),{plan:plan,status:'active'});
+    showToast('✅ Payment approved!');
+  }catch(e){showToast('❌ '+e.message);}
+};
+
+// Reject transaction
+window.rejectTxn=async function(id){
+  if(!confirm('Reject this payment?'))return;
+  try{await updateDoc(doc(db,'transactions',id),{status:'rejected'});showToast('✅ Rejected.');}
+  catch(e){showToast('❌ '+e.message);}
+};
+</script>
+<!-- ===== END FIREBASE ADMIN ===== -->
+
+</body>
+</html>
